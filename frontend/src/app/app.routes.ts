@@ -1,0 +1,45 @@
+import { Routes } from '@angular/router';
+import { LoginComponent } from './pages/login/login.component';
+import { LandingComponent } from './pages/landing/landing.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { ProductComponent } from './pages/product/product.component';
+import { AdminComponent } from './pages/admin/admin.component';
+import { AdminLoginComponent } from './pages/admin-login/admin-login.component';
+import { SignUpComponent } from './pages/sign-up/sign-up.component';
+import { authGuard } from './shared/guards/auth.guard';
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: LandingComponent
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'sign-up',
+    component: SignUpComponent
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'product/:id',
+    component: ProductComponent
+  },
+  {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'admin-login',
+    component: AdminLoginComponent
+  },
+  {
+    path:'**', redirectTo: '', pathMatch:'full'
+  }
+];

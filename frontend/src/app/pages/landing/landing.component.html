@@ -1,0 +1,10 @@
+<section class="landing">
+  <app-product-card
+    *ngFor="let product of products"
+    [imageUrl]="product.image"
+    [title]="product.name"
+    [price]="product.price"
+    [productId]="product.id"
+  >
+  </app-product-card>
+</section>

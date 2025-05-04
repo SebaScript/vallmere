@@ -1,0 +1,26 @@
+.product-card {
+  cursor: pointer;
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.2s;
+  width: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.product-image {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.product-title {
+  margin: 12px 0 4px;
+  font-weight: lighter;
+}
+.product-price {
+  font-weight: lighter;
+  color: var(--hover-color);
+}

@@ -1,0 +1,78 @@
+.header-content {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 28px;
+  background-color: #000;
+  padding: 0.5rem 1rem;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--font-color);
+}
+
+.search-container .material-icons {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.search-container input {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-container input::placeholder {
+  color: var(--font-color);
+  opacity: 0.6;
+}
+
+.search-container input:focus::placeholder {
+  color: transparent;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.search-container:focus-within {
+  border-bottom: 1px solid var(--hover-color);
+  transition: all 0.2s ease-in-out !important;
+}
+
+.search-container:focus-within .material-icons {
+  color: var(--hover-color);
+  transition: all 0.2s ease-in-out !important;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-item, .user-icon {
+  position: relative;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.action-item>i:hover, .user:hover {
+  color: var(--hover-color);
+  transition: all 0.2s ease-in-out;
+}
+
+.action-item .material-icons, .user {
+  font-size: 1.5rem;
+}
+
+.action-item .badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: var(--hover-color);
+  color: white;
+  border-radius: 50%;
+  padding: 0 6px;
+  font-size: 0.75rem;
+}

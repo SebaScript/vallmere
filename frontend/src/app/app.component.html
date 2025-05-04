@@ -1,0 +1,15 @@
+<div class="app-container">
+  <div class="announcement" *ngIf="!isLoginRoute">
+    <p>Free shipping on orders over $50</p>
+  </div>
+  <div class="app-content">
+  <app-header
+    [cartCount]="itemsInCart"
+    *ngIf="!isLoginRoute">
+  </app-header>
+    <app-sidebar *ngIf="!isLoginRoute"></app-sidebar>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

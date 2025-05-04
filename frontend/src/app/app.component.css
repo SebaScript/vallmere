@@ -1,0 +1,33 @@
+.app-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.app-content, app-header {
+  margin-left: 80px !important;
+  margin-right: 80px !important;
+}
+
+.announcement {
+  display: flex;
+  width: 100vw;
+  position: fixed;
+  z-index: 1000;
+  justify-content: center;
+  background-color: var(--hover-color);
+  align-items: center;
+  color: var(--font-color);
+}
+
+.announcement p {
+  margin: 0;
+  padding: 0.1rem 0.1rem;
+  background-color: var(--hover-color);
+}
+
+main {
+  padding: 0 0 0 200px;
+  width: 100%;
+}

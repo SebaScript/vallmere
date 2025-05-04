@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+  --font-family: "Courier New", "Courier Prime", Helvetica, sans-serif;
+  --hover-color: #eb0c4f;
+  --font-color: rgb(255, 213, 0);
+  --background-color: black;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--background-color);
+  color: var(--font-color);
+  font-family: var(--font-family);
+  caret-color: var(--hover-color);
+}
+
+body {
+  text-transform: uppercase;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+a:hover {
+  color: var(--hover-color) !important;
+  transition: all 0.2s ease-in-out !important;
+}

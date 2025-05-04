@@ -1,0 +1,70 @@
+* {
+  font-weight: 900;
+}
+
+.sidebar {
+  display: flex;
+  position: fixed;
+  top: 20px;
+  left: 80px;
+  max-width: 200px;
+  margin-top: 8px;
+  height: 100%;
+  z-index: 1000;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background-color: var(--background-color);
+  padding: 0 20px 20px 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 28px;
+}
+
+.sidebar-header img {
+  width: 160px;
+}
+
+.sidebar-content .sidebar-nav ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  align-items: flex-start;
+}
+
+.sidebar-content .sidebar-nav ul li {
+  width: 100%;
+  cursor: pointer;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.sidebar-content .sidebar-nav ul li:hover {
+  color: var(--hover-color);
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-footer {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.sidebar-footer i {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+#ig-icon {
+  padding: 0;
+  width: 1.5rem;
+}
+
+#ig-icon>i:hover {
+  color: var(--hover-color) !important;
+  transition: all 0.2s ease-in-out !important;
+}
