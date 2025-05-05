@@ -21,21 +21,21 @@ export class ProductDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(paramMap => {
+      const productId = paramMap.get('id');
+      const productsJSON = sessionStorage.getItem('products');
+      const products = productsJSON ? JSON.parse(productsJSON) : [];
 
-    const productId = this.route.snapshot.paramMap.get('id');
-    const productsJSON = sessionStorage.getItem('products');
-    const products = productsJSON ? JSON.parse(productsJSON) : [];
+      const found = products.find((p: any) => String(p.id) === productId);
+      console.log('Algo', productsJSON);
+      console.log('Algo', products);
 
-    const found = products.find((p: any) => String(p.id) === productId);
-    console.log('Algo', productsJSON);
-    console.log('Algo', products);
-
-
-    if (found) {
-      this.product = found;
-    } else {
-      console.warn('Producto no encontrado');
-    }
+      if (found) {
+        this.product = found;
+      } else {
+        console.warn('Producto no encontrado');
+      }
+    });
   }
 
   changeImage(direction: 'prev' | 'next') {
