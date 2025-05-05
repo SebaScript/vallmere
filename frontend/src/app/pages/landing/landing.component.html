@@ -1,6 +1,6 @@
 <section class="landing">
   <app-product-card
-    *ngFor="let product of products"
+    *ngFor="let product of filteredProducts()"
     [imageUrl]="product.imageUrl"
     [title]="product.name"
     [price]="product.price"
