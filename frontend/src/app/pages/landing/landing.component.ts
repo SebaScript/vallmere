@@ -55,7 +55,7 @@ export class LandingComponent {
         description: 'Stylish sunglasses for all occasions.',
         category: 'Hoodies',
         stock: 10,
-        price: 29.99,
+        price: 69.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/95RTWContstrastHoodie_BlackYellow_01.png?v=1741944335'
       },
       {
@@ -64,7 +64,7 @@ export class LandingComponent {
         description: 'Stylish sunglasses for all occasions.',
         category: 'Hats',
         stock: 10,
-        price: 29.99,
+        price: 19.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_01_1.png?v=1702917901'
       },
       {
@@ -73,7 +73,7 @@ export class LandingComponent {
         description: 'Stylish sunglasses for all occasions.',
         category: 'Bottoms',
         stock: 10,
-        price: 29.99,
+        price: 179.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541'
       },
       {
@@ -82,7 +82,7 @@ export class LandingComponent {
         description: 'Stylish sunglasses for all occasions.',
         category: 'Hats',
         stock: 10,
-        price: 29.99,
+        price: 19.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/LiteworkCap_Black_01.png?v=1738230492'
       },
       {
@@ -100,12 +100,11 @@ export class LandingComponent {
         description: 'Stylish sunglasses for all occasions.',
         category: 'T-shirts',
         stock: 10,
-        price: 29.99,
+        price: 69.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740'
       },
     ];
     sessionStorage.setItem('products', JSON.stringify(products));
     return products;
   }
-
 }
