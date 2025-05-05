@@ -1,11 +1,50 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-product',
-  imports: [],
+  selector: 'app-product-detail',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './product.component.html',
-  styleUrl: './product.component.css'
+  styleUrls: ['./product.component.css']
 })
-export class ProductComponent {
+export class ProductDetailComponent implements OnInit {
+  images: string[] = [];
+  currentImageIndex = 0;
 
+  product: any = null;
+  selectedSize: string = 'M';
+  sizes: string[] = ['XS', 'S', 'M', 'L', 'XL'];
+
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+
+    const productId = this.route.snapshot.paramMap.get('id');
+    const productsJSON = sessionStorage.getItem('products');
+    const products = productsJSON ? JSON.parse(productsJSON) : [];
+
+    const found = products.find((p: any) => String(p.id) === productId);
+    console.log('Algo', productsJSON);
+    console.log('Algo', products);
+
+
+    if (found) {
+      this.product = found;
+    } else {
+      console.warn('Producto no encontrado');
+    }
+  }
+
+  changeImage(direction: 'prev' | 'next') {
+    if (!this.product.imageUrl) return;
+
+    if (direction === 'prev') {
+      this.currentImageIndex = (this.currentImageIndex + this.product.imageUrl.length - 1) % this.product.imageUrl.length;
+    } else {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.product.imageUrl.length;
+    }
+  }
 }

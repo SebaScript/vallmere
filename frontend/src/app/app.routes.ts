@@ -2,11 +2,11 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { ProfileComponent } from './pages/profile/profile.component';
-import { ProductComponent } from './pages/product/product.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { AdminLoginComponent } from './pages/admin-login/admin-login.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
 import { authGuard } from './shared/guards/auth.guard';
+import { ProductDetailComponent } from './pages/product/product.component';
 
 export const routes: Routes = [
   {
@@ -28,7 +28,7 @@ export const routes: Routes = [
   },
   {
     path: 'product/:id',
-    component: ProductComponent
+    component: ProductDetailComponent
   },
   {
     path: 'admin',
