@@ -96,7 +96,7 @@ export class LandingComponent {
       },
       {
         id: 8,
-        name: 'Reversible 95 Men Hoodie',
+        name: 'Reversible 95 Men Shirt',
         description: 'Stylish sunglasses for all occasions.',
         category: 'T-shirts',
         stock: 10,
