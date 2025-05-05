@@ -69,7 +69,34 @@ export class LandingComponent {
         stock: 10,
         price: 29.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541'
-      }
+      },
+      {
+        id: 6,
+        name: 'Black Allstarz Cap',
+        description: 'Stylish sunglasses for all occasions.',
+        category: 'Sunglasses',
+        stock: 10,
+        price: 29.99,
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/LiteworkCap_Black_01.png?v=1738230492'
+      },
+      {
+        id: 7,
+        name: 'Mesh RTW Shorts',
+        description: 'Stylish sunglasses for all occasions.',
+        category: 'Sunglasses',
+        stock: 10,
+        price: 29.99,
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_01.png?v=1721727314'
+      },
+      {
+        id: 8,
+        name: 'Reversible 95 Men Hoodie',
+        description: 'Stylish sunglasses for all occasions.',
+        category: 'Sunglasses',
+        stock: 10,
+        price: 29.99,
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740'
+      },
     ];
     sessionStorage.setItem('products', JSON.stringify(this.products));
   }
