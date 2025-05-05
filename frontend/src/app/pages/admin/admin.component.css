@@ -35,6 +35,16 @@ th, td {
   border: 1px solid #dee2e6;
   text-align: left;
 }
+
+.product-image img {
+  width: 120px;
+}
+
+span.material-icons:hover {
+  color: var(--hover-color) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
 button {
   margin-right: 0.5rem;
   padding: 0.5rem 1rem;
@@ -42,6 +52,23 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.edit-btn {
+  font-weight: bolder;
+}
+
+.edit-btn:hover {
+  color: var(--hover-color) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.actions {
+  display: flex;
+  height: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
 button[type="submit"] {
   background: #28a745;
   color: #fff;

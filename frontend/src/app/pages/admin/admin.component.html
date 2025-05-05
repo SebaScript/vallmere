@@ -1,46 +1,106 @@
+<!-- src/app/admin/admin.component.html -->
 <div class="admin-panel">
   <aside class="sidebar">
-    <h3>Menu</h3>
+    <h3>Menú</h3>
     <ul>
-      <li (click)="view='list'">Ver Productos</li>
-      <li (click)="view='add'">Agregar Producto</li>
+      <li (click)="view = 'list'">Ver Productos</li>
+      <li (click)="view = 'add'">Agregar Producto</li>
     </ul>
   </aside>
+
   <main class="content">
-    <section *ngIf="view==='list'">
+    <!-- LISTADO -->
+    <section *ngIf="view === 'list'">
       <h2>Productos Disponibles</h2>
       <table>
         <thead>
           <tr>
+            <th>Imagen</th>
             <th>Nombre</th>
+            <th>Categoría</th>
             <th>Precio</th>
+            <th>Stock</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let product of products">
+            <td class="product-image">
+              <img
+                [src]="product.imageUrl"
+                [alt]="product.name"
+                class="thumb"
+              />
+            </td>
             <td>{{ product.name }}</td>
+            <td>{{ product.category }}</td>
             <td>{{ product.price | currency }}</td>
+            <td>{{ product.stock }}</td>
             <td>
-              <button (click)="editProduct(product)">Editar</button>
+              <div class="actions">
+                <button class="edit-btn" (click)="editProduct(product)">
+                  <span class="material-icons">edit</span>
+                </button>
+                <button
+                  class="icon-btn"
+                  title="Eliminar"
+                  (click)="deleteProduct(product.id)"
+                >
+                  <span class="material-icons">delete</span>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </section>
-    <section *ngIf="view==='add' || view==='edit'">
-      <h2>{{ view==='edit' ? 'Editar Producto' : 'Agregar Producto' }}</h2>
-      <form (ngSubmit)="onSubmit()" [formGroup]="productForm">
+
+    <section *ngIf="view === 'add' || view === 'edit'">
+      <h2>
+        {{ view === 'edit' ? 'Editar Producto' : 'Agregar Producto' }}
+      </h2>
+
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <label for="name">Nombre</label>
-          <input id="name" formControlName="name" required />
+          <input id="name" formControlName="name" />
         </div>
+
         <div class="form-group">
           <label for="price">Precio</label>
-          <input id="price" type="number" formControlName="price" required />
+          <input id="price" type="number" formControlName="price" />
         </div>
-        <button type="submit">{{ view==='edit' ? 'Actualizar' : 'Agregar' }}</button>
-        <button type="button" (click)="cancel()">Cancelar</button>
+
+        <div class="form-group">
+          <label for="imageUrl">URL Imagen</label>
+          <input id="imageUrl" formControlName="imageUrl" />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <textarea
+            id="description"
+            rows="3"
+            formControlName="description"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Categoría</label>
+          <input id="category" formControlName="category" />
+        </div>
+
+        <div class="form-group">
+          <label for="stock">Stock</label>
+          <input id="stock" type="number" formControlName="stock" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">
+            {{ view === 'edit' ? 'Actualizar' : 'Agregar' }}
+          </button>
+          <button type="button" (click)="cancel()">Cancelar</button>
+        </div>
       </form>
     </section>
   </main>
