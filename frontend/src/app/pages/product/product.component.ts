@@ -39,12 +39,12 @@ export class ProductDetailComponent implements OnInit {
   }
 
   changeImage(direction: 'prev' | 'next') {
-    if (!this.product.imageUrl) return;
+    if (!this.product.carrouselUrl) return;
 
     if (direction === 'prev') {
-      this.currentImageIndex = (this.currentImageIndex + this.product.imageUrl.length - 1) % this.product.imageUrl.length;
+      this.currentImageIndex = (this.currentImageIndex + this.product.carrouselUrl.length - 1) % this.product.carrouselUrl.length;
     } else {
-      this.currentImageIndex = (this.currentImageIndex + 1) % this.product.imageUrl.length;
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.product.carrouselUrl.length;
     }
   }
 }

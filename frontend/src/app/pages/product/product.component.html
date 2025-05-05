@@ -1,7 +1,7 @@
 <div class="product-container" *ngIf="product">
-    <div class="image-section" *ngIf="product.imageUrl?.length">
+    <div class="image-section" *ngIf="product.carrouselUrl?.length">
         <button class="nav-btn" (click)="changeImage('prev')">‹</button>
-        <img [src]="product.imageUrl[currentImageIndex]" alt="Product Image" class="main-image" />
+        <img [src]="product.carrouselUrl[currentImageIndex]" alt="Product Image" class="main-image" />
         <button class="nav-btn" (click)="changeImage('next')">›</button>
       </div>
   
@@ -9,7 +9,7 @@
       <h2>{{ product.name }}</h2>
       <p class="price">${{ product.price }}</p>
   
-      <label for="size">Size</label>
+      <label for="size">Size  </label>
       <select id="size" [(ngModel)]="selectedSize">
         <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
       </select>

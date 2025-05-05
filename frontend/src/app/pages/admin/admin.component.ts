@@ -46,15 +46,15 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    const { name, price, imageUrl, description, category, stock } = this.productForm.value;
+    const { name, price, imageUrl, carrouselUrl, description, category, stock } = this.productForm.value;
 
     if (this.view === 'add') {
       const newId = this.products.length ? Math.max(...this.products.map(p => p.id)) + 1 : 1;
-      this.products.push({ id: newId, name, price, imageUrl, description, category, stock });
+      this.products.push({ id: newId, name, price, imageUrl, carrouselUrl, description, category, stock });
     } else if (this.view === 'edit' && this.editId !== null) {
       const idx = this.products.findIndex(p => p.id === this.editId);
       if (idx > -1) {
-        this.products[idx] = { id: this.editId, name, price, imageUrl, description, category, stock };
+        this.products[idx] = { id: this.editId, name, price, imageUrl, carrouselUrl, description, category, stock };
       }
     }
 

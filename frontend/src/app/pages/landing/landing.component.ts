@@ -38,7 +38,8 @@ export class LandingComponent {
         category: 'Accesories',
         stock: 10,
         price: 49.99,
-        imageUrl: ['https://www.crtz.xyz/cdn/shop/files/Sunglasses_Yellow_02.png?v=1726478831',
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/Sunglasses_Yellow_02.png?v=1726478831',
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/Sunglasses_Yellow_02.png?v=1726478831',
           'https://www.crtz.xyz/cdn/shop/files/Sunglasses_Yellow_03.png?v=1726478840&width=1024',
           'https://www.crtz.xyz/cdn/shop/files/Sunglasses_Yellow_01.png?v=1726478849&width=1024',
         ]
@@ -50,7 +51,8 @@ export class LandingComponent {
         category: 'Bottoms',
         stock: 10,
         price: 29.99,
-        imageUrl: ['https://www.crtz.xyz/cdn/shop/products/image_8d6da066-54b2-4388-927b-d5e1a5da5cec.png?v=1679066389']
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/products/image_8d6da066-54b2-4388-927b-d5e1a5da5cec.png?v=1679066389',
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/products/image_8d6da066-54b2-4388-927b-d5e1a5da5cec.png?v=1679066389']
       },
       {
         id: 3,
@@ -59,7 +61,8 @@ export class LandingComponent {
         category: 'Hoodies',
         stock: 10,
         price: 69.99,
-        imageUrl: ['https://www.crtz.xyz/cdn/shop/files/95RTWContstrastHoodie_BlackYellow_01.png?v=1741944335']
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/95RTWContstrastHoodie_BlackYellow_01.png?v=1741944335',
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/95RTWContstrastHoodie_BlackYellow_01.png?v=1741944335']
       },
       {
         id: 4,
@@ -68,7 +71,8 @@ export class LandingComponent {
         category: 'Hats',
         stock: 10,
         price: 19.99,
-        imageUrl: ['https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_01_1.png?v=1702917901']
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_01_1.png?v=1702917901',
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_01_1.png?v=1702917901']
       },
       {
         id: 5,
@@ -77,7 +81,8 @@ export class LandingComponent {
         category: 'Bottoms',
         stock: 10,
         price: 179.99,
-        imageUrl: ['https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541']
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541',
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541']
       },
       {
         id: 6,
@@ -86,7 +91,8 @@ export class LandingComponent {
         category: 'Hats',
         stock: 10,
         price: 19.99,
-        imageUrl: ['https://www.crtz.xyz/cdn/shop/files/LiteworkCap_Black_01.png?v=1738230492']
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/LiteworkCap_Black_01.png?v=1738230492',
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/LiteworkCap_Black_01.png?v=1738230492']
       },
       {
         id: 7,
@@ -95,7 +101,8 @@ export class LandingComponent {
         category: 'Bottoms',
         stock: 10,
         price: 29.99,
-        imageUrl: ['https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_01.png?v=1721727314']
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_01.png?v=1721727314',
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_01.png?v=1721727314']
       },
       {
         id: 8,
@@ -104,7 +111,8 @@ export class LandingComponent {
         category: 'T-shirts',
         stock: 10,
         price: 69.99,
-        imageUrl:['https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740']
+        imageUrl: 'https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740',
+        carrouselUrl:['https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740']
       },
     ];
     sessionStorage.setItem('products', JSON.stringify(products));
