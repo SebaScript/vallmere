@@ -1,9 +1,29 @@
 <header class="app-header">
-  <div class ="header-content">
+  <div class="header-content">
     <div class="search-container">
       <i class="material-icons">search</i>
-      <input type="text" placeholder="Search" />
+      <input
+        type="text"
+        placeholder="Search"
+        [(ngModel)]="query"
+        (input)="onSearch()"
+      />
+      <button
+        *ngIf="results.length || query"
+        class="close-btn"
+        (click)="clearSearch()"
+        aria-label="Cerrar búsqueda"
+      >
+        ×
+      </button>
+      <ul class="search-results" *ngIf="results.length > 0">
+        <li *ngFor="let item of results" (click)="goToProduct(item.id)">
+          <img [src]="item.imageUrl" alt="{{ item.name }}" class="thumb" />
+          <span class="name">{{ item.name }}</span>
+        </li>
+      </ul>
     </div>
+
     <div class="actions">
       <div class="action-item">
         <i class="material-icons">shopping_cart</i>

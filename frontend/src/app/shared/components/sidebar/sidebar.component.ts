@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CategoryService } from '../../services/category.service';
 
 @Component({
@@ -9,9 +9,14 @@ import { CategoryService } from '../../services/category.service';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
-  constructor(private catSvc: CategoryService) {}
+  constructor(
+    private catSvc: CategoryService,
+    public router: Router) {}
 
   selectCategory(cat: string) {
+    if (this.router.url !== '/') {
+      this.router.navigateByUrl('/');
+    }
     this.catSvc.setCategory(cat);
-  }
+}
 }

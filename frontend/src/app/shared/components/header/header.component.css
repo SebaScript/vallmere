@@ -46,23 +46,78 @@
   transition: all 0.2s ease-in-out !important;
 }
 
+.search-container {
+  position: relative;
+}
+
+.search-container .close-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.search-container input {
+  padding-right: 2rem;
+}
+.search-results {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hover-color) transparent;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid #cccccc73;
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;
+}
+.search-results li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+.search-results li:hover span {
+  color: var(--hover-color);
+}
+.search-results .thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
+.search-results .name {
+  flex: 1;
+}
+
 .actions {
   display: flex;
   align-items: center;
 }
 
-.action-item, .user-icon {
+.action-item,
+.user-icon {
   position: relative;
   margin-right: 1rem;
   cursor: pointer;
 }
 
-.action-item>i:hover, .user:hover {
+.action-item > i:hover,
+.user:hover {
   color: var(--hover-color);
   transition: all 0.2s ease-in-out;
 }
 
-.action-item .material-icons, .user {
+.action-item .material-icons,
+.user {
   font-size: 1.5rem;
 }
 
