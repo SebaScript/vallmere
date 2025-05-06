@@ -27,8 +27,6 @@ export class ProductDetailComponent implements OnInit {
       const products = productsJSON ? JSON.parse(productsJSON) : [];
 
       const found = products.find((p: any) => String(p.id) === productId);
-      console.log('Algo', productsJSON);
-      console.log('Algo', products);
 
       if (found) {
         this.product = found;

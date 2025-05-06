@@ -69,6 +69,7 @@ export class AdminComponent implements OnInit {
       name: product.name,
       price: product.price,
       imageUrl: product.imageUrl,
+      carrouselUrl: [product.imageUrl],
       description: product.description,
       category: product.category,
       stock: product.stock });

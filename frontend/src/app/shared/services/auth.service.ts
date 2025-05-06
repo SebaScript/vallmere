@@ -27,16 +27,18 @@ export class AuthService {
 
   }
 
-  userLogin(username: string, password: string): boolean {
-    const userStr = localStorage.getItem(username);
-    if (userStr) {
-      const userDB: User = JSON.parse(userStr);
-      if (password === userDB.password) {
-        this.isUserLogged.update(() => true);
-        return true;
-      }
+  userLogin(usernameOrEmail: string, password: string): boolean {
+    const raw = sessionStorage.getItem('users');
+    const users: User[] = raw ? JSON.parse(raw) : [];
+    const userDB = users.find(u =>
+      u.username === usernameOrEmail.trim() ||
+      u.email === usernameOrEmail.trim().toLowerCase()
+    );
+    if (userDB && userDB.password === password) {
+      this.isUserLogged.set(true);
+      return true;
     }
-    alert('Username or password incorrect');
+    alert('Username/email o contraseña incorrectos');
     return false;
   }
 
