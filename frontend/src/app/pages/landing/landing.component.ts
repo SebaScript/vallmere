@@ -52,7 +52,9 @@ export class LandingComponent {
         stock: 10,
         price: 29.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/products/image_8d6da066-54b2-4388-927b-d5e1a5da5cec.png?v=1679066389',
-        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/products/image_8d6da066-54b2-4388-927b-d5e1a5da5cec.png?v=1679066389']
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/products/image_8d6da066-54b2-4388-927b-d5e1a5da5cec.png?v=1679066389',
+          'https://www.crtz.xyz/cdn/shop/products/image_7aa9657c-255e-4f29-9778-12102be696e2.png?v=1679066415&width=1024',
+        ]
       },
       {
         id: 3,
@@ -72,7 +74,9 @@ export class LandingComponent {
         stock: 10,
         price: 19.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_01_1.png?v=1702917901',
-        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_01_1.png?v=1702917901']
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_01_1.png?v=1702917901',
+          'https://www.crtz.xyz/cdn/shop/files/CRTZTruckerCap_BlackYellow_02.png?v=1702917901&width=1024',
+        ]
       },
       {
         id: 5,
@@ -82,7 +86,13 @@ export class LandingComponent {
         stock: 10,
         price: 179.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541',
-        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541']
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_E_1X1_7b4d2a11-dfc1-455a-b02b-a682a1b6237f.png?v=1743515541',
+          'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_D_1X1_8af76b72-5051-471f-acf3-5d1034ba27c9.png?v=1743515541&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_9Y_1X1_0c77c57d-5542-4361-8ced-c6cee8ab0df8.png?v=1743515541&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_F_1X1_1bc7058d-53cf-434e-bcc3-a46f72a721ef.png?v=1743515541&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_H_1X1_452b8087-70f0-4fb1-8045-c5ec34f2c359.png?v=1743515541&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/FB2709-003_400730681_D_K_1X1_01ae8df4-27f2-4521-8565-3bd27316a1d4.png?v=1743515541&width=1024'
+        ]
       },
       {
         id: 6,
@@ -102,7 +112,10 @@ export class LandingComponent {
         stock: 10,
         price: 29.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_01.png?v=1721727314',
-        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_01.png?v=1721727314']
+        carrouselUrl: ['https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_01.png?v=1721727314',
+          'https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_02.png?v=1741189744&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/RTWMESHSHORTS_BLACK_03.png?v=1741189744&width=1024'
+        ]
       },
       {
         id: 8,
@@ -112,7 +125,12 @@ export class LandingComponent {
         stock: 10,
         price: 69.99,
         imageUrl: 'https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740',
-        carrouselUrl:['https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740']
+        carrouselUrl:['https://www.crtz.xyz/cdn/shop/files/jerseydouble.png?v=1745928740',
+          'https://www.crtz.xyz/cdn/shop/files/95RevesibleMeshJersey_BlackYellow_01.png?v=1745928740&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/95RevesibleMeshJersey_BlackYellow_02.png?v=1745928740&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/95RevesibleMeshJersey_BlackYellow_03.png?v=1745928740&width=1024',
+          'https://www.crtz.xyz/cdn/shop/files/95RevesibleMeshJersey_BlackYellow_04.png?v=1745928740&width=1024'
+        ]
       },
     ];
     sessionStorage.setItem('products', JSON.stringify(products));
