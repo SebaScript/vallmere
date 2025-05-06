@@ -4,29 +4,26 @@
         <img [src]="product.carrouselUrl[currentImageIndex]" alt="Product Image" class="main-image" />
         <button class="nav-btn" (click)="changeImage('next')">›</button>
       </div>
-  
+
     <div class="info-section">
       <h2>{{ product.name }}</h2>
       <p class="price">${{ product.price }}</p>
-  
+
       <label for="size">Size  </label>
       <select id="size" [(ngModel)]="selectedSize">
         <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
       </select>
-  
-      <!-- Botón "Sold Out" según stock -->
+
       <button class="sold-out" disabled *ngIf="product.stock === 0">SOLD OUT</button>
-  
-      <!-- Detalles fijos, como ejemplo -->
+
       <ul class="details">
         <li>100% COTTON</li>
         <li>STYLISH DESIGN</li>
         <li>LIMITED EDITION</li>
       </ul>
-  
+
       <div class="links">
         <a href="#">SIZE GUIDE</a> | <a href="#">SHIPPING POLICY</a>
       </div>
     </div>
   </div>
-  
