@@ -27,10 +27,18 @@ export class AuthService {
 
   }
 
-  userLogin(username:string, password:string):boolean{
+  userLogin(username: string, password: string): boolean {
+    const userStr = localStorage.getItem(username);
+    if (userStr) {
+      const userDB: User = JSON.parse(userStr);
+      if (password === userDB.password) {
+        this.isUserLogged.update(() => true);
+        return true;
+      }
+    }
+    alert('Username or password incorrect');
     return false;
   }
-
 
   logout(){
     this.isAdminLogged.update(()=>false);
