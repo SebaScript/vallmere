@@ -1,1 +1,51 @@
-<p>profile works!</p>
+<div class="profile-card">
+    <div class="profile-header">
+        <h2>{{ user.name }}</h2>
+        <p>{{ user.email }}</p>
+    </div>
+
+    <div class="profile-info" *ngIf="!editing; else editForm">
+        <p><strong>Teléfono:</strong> {{ user.phone }}</p>
+        <p><strong>Dirección:</strong> {{ user.address[0] }}</p>
+        <p><strong>Fecha de nacimiento:</strong> {{ user.birthdate }}</p>
+        <button (click)="toggleEdit()">Editar</button>
+    </div>
+
+    <ng-template #editForm>
+        <form (ngSubmit)="save()" class="form">
+            <label>
+                Nombre:
+                <input type="text" [(ngModel)]="user.name" name="name" required>
+            </label>
+            <label>
+                Email:
+                <input type="email" [(ngModel)]="user.email" name="email" required>
+            </label>
+            <label>
+                Teléfono:
+                <input type="text" [(ngModel)]="user.phone" name="phone">
+            </label>
+            <label>
+                Dirección:
+                <input type="text" [(ngModel)]="user.address" name="address">
+            </label>
+            <label>
+                Fecha de nacimiento:
+                <input type="date" [(ngModel)]="user.birthdate" name="birthdate">
+            </label>
+
+            <button type="submit">Guardar</button>
+            <button type="button" (click)="toggleEdit()">Cancelar</button>
+        </form>
+    </ng-template>
+</div>
+
+<div class="profile-card">
+    <div class="profile-header">
+        <h2>Direcciones</h2>
+        <ul>
+            <li *ngFor="let dir of user.address">{{ dir }}</li>
+        </ul>
+    <button (click)="toggleEdit()">Agregar dirección</button>
+    </div>
+</div>
