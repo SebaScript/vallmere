@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vallmere_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vallmere_password}
+      POSTGRES_DB: ${POSTGRES_DB:-vallmere_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=${POSTGRES_USER:-vallmere_user}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-vallmere_password}
+      - DB_NAME=${POSTGRES_DB:-vallmere_db}
+      - DB_SYNC=${DB_SYNC:-true}
+    command: ["./wait-for-postgres.sh", "postgres", "node", "dist/main"]
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:4200"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data: 
