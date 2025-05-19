@@ -1,67 +1,126 @@
 import { Injectable, signal } from '@angular/core';
 import { User } from '../interfaces/user.interface';
 import Swal from 'sweetalert2';
-import { Admin } from '../interfaces/admin.interface';
+import { ApiService } from './api.service';
+import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  constructor() { }
-
   isAdminLogged = signal(false);
   isUserLogged = signal(false);
 
-  adminLogin(username:string, password:string):boolean{
-    const adminSrt = localStorage.getItem(username);
-    if(adminSrt){
-      const adminDB:Admin = JSON.parse(adminSrt);
-      if(password===adminDB.password){
-        this.isAdminLogged.update(()=>true);
-        return true;
-      }
-    }
-    alert('Username or password incorrect');
-    return false;
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
 
+  constructor(
+    private apiService: ApiService,
+    private router: Router
+  ) {
+    // Check if we have a stored token
+    this.checkLocalStorage();
   }
 
-  userLogin(usernameOrEmail: string, password: string): boolean {
-    const raw = sessionStorage.getItem('users');
-    const users: User[] = raw ? JSON.parse(raw) : [];
-    const userDB = users.find(u =>
-      u.username === usernameOrEmail.trim() ||
-      u.email === usernameOrEmail.trim().toLowerCase()
-    );
-    if (userDB && userDB.password === password) {
+  private checkLocalStorage() {
+    const userData = localStorage.getItem('currentUser');
+    if (userData) {
+      const user = JSON.parse(userData);
+      this.currentUserSubject.next(user);
       this.isUserLogged.set(true);
-      return true;
+      this.isAdminLogged.set(user.role === 'admin');
     }
-    alert('Username/email o contraseña incorrectos');
-    return false;
   }
 
-  logout(){
-    this.isAdminLogged.update(()=>false);
-    this.isUserLogged.update(()=>false);
+  adminLogin(email: string, password: string): Observable<boolean> {
+    return this.apiService.post<any>('auth/login', { email, password })
+      .pipe(
+        map(response => {
+          if (response && response.role === 'admin') {
+            localStorage.setItem('currentUser', JSON.stringify(response));
+            this.currentUserSubject.next(response);
+            this.isAdminLogged.set(true);
+            this.isUserLogged.set(true);
+            return true;
+          }
+          return false;
+        }),
+        catchError(() => {
+          Swal.fire({
+            title: 'Error',
+            text: 'Invalid credentials',
+            icon: 'error',
+          });
+          return of(false);
+        })
+      );
   }
 
-  registry(user:User):boolean{
-    const userSrt = localStorage.getItem(user.username);
-
-    console.log(userSrt)
-    if(userSrt){
-      Swal.fire({
-        text:`Usuario ${user.username} ya existe`,
-        icon:'error'
-      });
-      return false;
-    }
-    localStorage.setItem(user.username, JSON.stringify(user));
-    this.isUserLogged.update(()=>true);
-    return true;
+  userLogin(usernameOrEmail: string, password: string): Observable<boolean> {
+    return this.apiService.post<any>('auth/login', { email: usernameOrEmail, password })
+      .pipe(
+        map(response => {
+          if (response) {
+            localStorage.setItem('currentUser', JSON.stringify(response));
+            this.currentUserSubject.next(response);
+            this.isUserLogged.set(true);
+            this.isAdminLogged.set(response.role === 'admin');
+            return true;
+          }
+          return false;
+        }),
+        catchError(() => {
+          Swal.fire({
+            title: 'Error',
+            text: 'Invalid credentials',
+            icon: 'error',
+          });
+          return of(false);
+        })
+      );
   }
 
+  logout(): void {
+    localStorage.removeItem('currentUser');
+    this.currentUserSubject.next(null);
+    this.isAdminLogged.set(false);
+    this.isUserLogged.set(false);
+    this.router.navigate(['/login']);
+  }
 
+  register(user: User): Observable<boolean> {
+    return this.apiService.post<any>('auth/register', {
+      name: user.username,
+      email: user.email,
+      password: user.password
+    }).pipe(
+      map(response => {
+        if (response) {
+          localStorage.setItem('currentUser', JSON.stringify(response));
+          this.currentUserSubject.next(response);
+          this.isUserLogged.set(true);
+          return true;
+        }
+        return false;
+      }),
+      catchError(error => {
+        Swal.fire({
+          title: 'Error',
+          text: error.error?.message || 'User registration failed',
+          icon: 'error',
+        });
+        return of(false);
+      })
+    );
+  }
+
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  isAdmin(): boolean {
+    const user = this.currentUserSubject.value;
+    return !!user && user.role === 'admin';
+  }
 }

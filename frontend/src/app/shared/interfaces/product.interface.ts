@@ -3,7 +3,7 @@ export interface Product {
   name: string;
   price: number;
   imageUrl: string;
-  carrouselUrl: string[];
+  carouselUrl: string[];
   description: string;
   category: string;
   stock: number;

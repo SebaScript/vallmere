@@ -70,8 +70,24 @@
         </div>
 
         <div class="form-group">
-          <label for="imageUrl">URL Imagen</label>
-          <input id="imageUrl" formControlName="imageUrl" />
+          <label for="imageUrl">Imagen Principal</label>
+          <input id="imageUrl" formControlName="imageUrl" placeholder="URL de la imagen principal" />
+        </div>
+
+        <div class="form-group">
+          <label>Imágenes Adicionales</label>
+          <div formArrayName="carouselUrl" class="image-urls-container">
+            <div *ngFor="let url of carouselUrl.controls; let i = index" class="image-url-input">
+              <input [formControlName]="i" placeholder="URL de imagen adicional" />
+              <button type="button" class="icon-btn" (click)="removeImageUrl(i)" [disabled]="i === 0">
+                <span class="material-icons">remove</span>
+              </button>
+            </div>
+            <button type="button" class="add-url-btn" (click)="addImageUrl()">
+              <span class="material-icons">add</span>
+              Agregar otra imagen
+            </button>
+          </div>
         </div>
 
         <div class="form-group">
