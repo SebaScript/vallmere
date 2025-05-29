@@ -1,0 +1,65 @@
+server.name: "vallmere-kibana"
+server.host: "0.0.0.0"
+server.port: 5601
+
+# Elasticsearch connection
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+
+# Monitoring
+monitoring.ui.container.elasticsearch.enabled: true
+xpack.monitoring.ui.container.elasticsearch.enabled: true
+
+# Security (disabled for development)
+xpack.security.enabled: false
+
+# Kibana settings
+kibana.index: ".kibana-vallmere"
+
+# Default index pattern
+kibana.defaultAppId: "discover"
+
+# Logging
+logging.level: info
+logging.dest: stdout
+
+# Performance
+elasticsearch.requestTimeout: 30000
+elasticsearch.shardTimeout: 30000
+
+# UI settings
+map.includeElasticMapsService: false
+
+# Development settings
+status.allowAnonymous: true
+server.basePath: ""
+
+# Index patterns
+kibana.autocompleteTimeout: 1000
+
+# Time settings
+timelion.enabled: true
+
+# Advanced settings
+data.autocomplete.valueSuggestions.timeout: 1000
+data.autocomplete.valueSuggestions.terminateAfter: 100000
+
+# Encryption key for saved objects
+xpack.encryptedSavedObjects.encryptionKey: "a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d"
+
+# Saved objects
+savedObjects.maxImportPayloadBytes: 26214400
+
+# Reporting (disabled for development)
+xpack.reporting.enabled: false
+
+# Machine learning (disabled for development)  
+xpack.ml.enabled: false
+
+# APM (disabled for development)
+xpack.apm.enabled: false
+
+# Canvas (enabled)
+xpack.canvas.enabled: true
+
+# Dashboard mode
+xpack.dashboard_mode.enabled: false 

@@ -1,0 +1,17 @@
+config.reload.automatic: true
+config.reload.interval: 10s
+config.support_escapes: true
+http.host: 0.0.0.0
+http.port: 9600
+log.level: info
+path.config: /usr/share/logstash/pipeline
+path.data: /usr/share/logstash/data
+path.logs: /usr/share/logstash/logs
+pipeline.batch.delay: 50
+pipeline.batch.size: 1000
+pipeline.workers: 2
+queue.type: memory
+slowlog.threshold.info: 1s
+slowlog.threshold.warn: 2s
+xpack.monitoring.elasticsearch.hosts: ${XPACK_MONITORING_ELASTICSEARCH_HOSTS}
+xpack.monitoring.enabled: ${XPACK_MONITORING_ENABLED}

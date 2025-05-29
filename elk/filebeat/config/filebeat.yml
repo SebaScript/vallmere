@@ -1,0 +1,70 @@
+filebeat.inputs:
+  # Nginx access logs
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/nginx/access.log
+    fields:
+      log_type: access
+      service: vallmere
+      component: nginx
+    fields_under_root: true
+    multiline.pattern: '^\d{4}/\d{2}/\d{2}'
+    multiline.negate: true
+    multiline.match: after
+
+  # Nginx error logs  
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/nginx/error.log
+    fields:
+      log_type: error
+      service: vallmere
+      component: nginx
+    fields_under_root: true
+    multiline.pattern: '^\d{4}/\d{2}/\d{2}'
+    multiline.negate: true
+    multiline.match: after
+
+# Output to Logstash
+output.logstash:
+  hosts: ["logstash:5044"]
+  
+# Do not output to Elasticsearch directly
+output.elasticsearch:
+  enabled: false
+
+# Processors
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+
+# Logging
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat.log
+  keepfiles: 7
+  permissions: 0644
+
+# Monitoring
+monitoring.enabled: true
+monitoring.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+
+# General settings
+name: vallmere-filebeat
+tags: ["vallmere", "nginx", "webserver"]
+
+# Queue settings
+queue.mem:
+  events: 4096
+  flush.min_events: 1024
+  flush.timeout: 1s
+
+# Performance
+filebeat.registry.flush: 1s 

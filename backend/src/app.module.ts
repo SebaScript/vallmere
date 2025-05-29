@@ -10,18 +10,20 @@ import { CategoryModule } from './category/category.module';
 import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
 import { SeederModule } from './seeder/seeder.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    LoggerModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get('DB_HOST', 'localhost'),
+        host: configService.get('DB_HOST', 'postgres'),
         port: configService.get('DB_PORT', 5432),
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'postgres'),

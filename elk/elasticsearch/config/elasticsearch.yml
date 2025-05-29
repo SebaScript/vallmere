@@ -1,0 +1,36 @@
+cluster.name: "vallmere-cluster"
+node.name: "vallmere-es-node"
+
+# Network settings
+network.host: 0.0.0.0
+http.port: 9200
+
+# Discovery settings
+discovery.type: single-node
+
+# Security settings (disabled for development)
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+
+# License settings
+xpack.license.self_generated.type: basic
+
+# Monitoring settings
+xpack.monitoring.collection.enabled: true
+
+# Performance settings
+indices.id_field_data.enabled: true
+bootstrap.memory_lock: true
+
+# Logging
+logger.level: INFO
+
+# Data paths
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+
+# Index settings
+action.auto_create_index: "+vallmere-*,+logstash-*,+filebeat-*,.monitoring-*,.watches,.triggered_watches,.watcher-history-*"
+
+# Compatibility mode
+# compatibility.override_main_response_version: true 

@@ -1,53 +1,237 @@
 version: '3.8'
 
 services:
+  # Base de datos PostgreSQL
   postgres:
     image: postgres:16-alpine
+    container_name: vallmere-postgres
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-vallmere_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vallmere_password}
       POSTGRES_DB: ${POSTGRES_DB:-vallmere_db}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
-      - app-network
+      - vallmere-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vallmere_user} -d ${POSTGRES_DB:-vallmere_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.2
+    container_name: vallmere-elasticsearch
+    restart: unless-stopped
+    environment:
+      - node.name=vallmere-es-node
+      - cluster.name=vallmere-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - xpack.license.self_generated.type=basic
+      - xpack.monitoring.collection.enabled=true
+      - indices.id_field_data.enabled=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - vallmere-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Logstash
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.2
+    container_name: vallmere-logstash
+    restart: unless-stopped
+    volumes:
+      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - logstash_data:/usr/share/logstash/data
+    ports:
+      - "5044:5044"   # Beats input
+      - "5000:5000"   # TCP input for backend logs
+      - "5001:5001"   # TCP input for frontend logs
+      - "9600:9600"   # Logstash monitoring API
+    environment:
+      - LS_JAVA_OPTS=-Xmx512m -Xms512m
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - XPACK_MONITORING_ENABLED=true
+      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - vallmere-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9600 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.2
+    container_name: vallmere-kibana
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=vallmere-kibana
+      - SERVER_HOST=0.0.0.0
+      - XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED=true
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc36572c33a6c10925682e591bffcab6911c06786d
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+      - ./elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
+    networks:
+      - vallmere-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # Backend NestJS
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile.backend
-    depends_on:
-      - postgres
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: vallmere-backend
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - PORT=3000
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USERNAME=${POSTGRES_USER:-vallmere_user}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-vallmere_password}
       - DB_NAME=${POSTGRES_DB:-vallmere_db}
       - DB_SYNC=${DB_SYNC:-true}
-    command: ["./wait-for-postgres.sh", "postgres", "node", "dist/main"]
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+    volumes:
+      - ./backend/logs:/usr/src/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
     networks:
-      - app-network
+      - vallmere-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
+  # Frontend Angular
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    depends_on:
-      - backend
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: vallmere-frontend
+    restart: unless-stopped
     ports:
-      - "4200:4200"
+      - "80:80"
+      - "443:443"
+    environment:
+      - API_URL=http://backend:3000
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5001
+    volumes:
+      - ./frontend/nginx/logs:/var/log/nginx
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
-      - app-network
+      - vallmere-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Filebeat para enviar logs de nginx a Logstash
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.13.2
+    container_name: vallmere-filebeat
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ./elk/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./frontend/nginx/logs:/var/log/nginx:ro
+      - filebeat_data:/usr/share/filebeat/data
+    environment:
+      - LOGSTASH_HOSTS=logstash:5044
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      logstash:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    networks:
+      - vallmere-network
 
 networks:
-  app-network:
+  vallmere-network:
     driver: bridge
+    name: vallmere-network
 
 volumes:
-  postgres_data: 
+  postgres_data:
+    driver: local
+    name: vallmere_postgres_data
+  elasticsearch_data:
+    driver: local
+    name: vallmere_elasticsearch_data
+  kibana_data:
+    driver: local
+    name: vallmere_kibana_data
+  logstash_data:
+    driver: local
+    name: vallmere_logstash_data
+  filebeat_data:
+    driver: local
+    name: vallmere_filebeat_data 

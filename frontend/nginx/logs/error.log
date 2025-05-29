@@ -1,0 +1,36 @@
+2025/05/28 09:01:04 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:04 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:08 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:08 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:10 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:10 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:13 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:13 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:16 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:16 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:19 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:19 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:26 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:26 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:35 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:35 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:01:49 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:01:49 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:02:16 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:02:16 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:03:08 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:03:08 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:04:09 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:04:09 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:05:10 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:05:10 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:06:11 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:06:11 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:07:12 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:07:12 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:08:12 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:08:12 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:09:16 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:09:16 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
+2025/05/28 09:10:17 [warn] 1#1: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:1
+2025/05/28 09:10:17 [emerg] 1#1: mkdir() "/var/cache/nginx/client_temp" failed (13: Permission denied)
