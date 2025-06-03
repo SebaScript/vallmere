@@ -1,11 +1,26 @@
 export interface User {
-  id?: number;
-  username: string;
+  userId?: number;
+  name: string;
+  email: string;
+  password?: string;
+  role?: 'admin' | 'client';
+  carts?: any[];
+  orders?: any[];
+}
+
+export interface AuthResponse {
+  access_token: string;
+  user: User;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  name: string;
   email: string;
   password: string;
   role?: 'admin' | 'client';
-  profilePicture?: string;
-  shippingAddress?: string;
-  billingAddress?: string;
-  token?: string; // JWT token for authentication
 }

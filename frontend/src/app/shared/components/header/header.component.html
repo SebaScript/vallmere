@@ -27,10 +27,12 @@
     <div class="actions">
       <div class="action-item">
         <i class="material-icons">shopping_cart</i>
-        <span class="badge">0</span>
+        <span class="badge">{{ cartCount }}</span>
       </div>
-      <div class="user-icon" [routerLink]="['/login']">
-        <i class="user material-icons">person_4</i>
+
+      <!-- Simplified user icon -->
+      <div class="action-item user-icon" (click)="handleUserClick()">
+        <i class="material-icons">person</i>
       </div>
     </div>
   </div>

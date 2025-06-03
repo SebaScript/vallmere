@@ -1,14 +1,70 @@
-<div class="login-container">
-  <form (ngSubmit)="onLogin()" [formGroup]="loginForm" class="login-form">
-    <h2>Admin Login</h2>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input id="email" type="text" formControlName="email" required />
+<div class="admin-login-container">
+  <div class="admin-login-card">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <img src="/logo.png" alt="VALLMERE" class="admin-logo">
+      <h1 class="brand-name">VALLMERE</h1>
+      <span class="admin-badge">Admin Portal</span>
     </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input id="password" type="password" formControlName="password" required />
-    </div>
-    <button type="submit">Login</button>
-  </form>
+
+    <form (ngSubmit)="onLogin()" [formGroup]="loginForm" class="admin-login-form">
+      <div class="form-header">
+        <h2>Administrator Access</h2>
+        <p>Access the admin dashboard</p>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-container">
+          <i class="material-icons">admin_panel_settings</i>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            placeholder="Enter admin email"
+            required
+          />
+        </div>
+        <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <small *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</small>
+          <small *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-container">
+          <i class="material-icons">security</i>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            placeholder="Enter admin password"
+            required
+          />
+        </div>
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <small *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</small>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="admin-login-btn"
+        [disabled]="loginForm.invalid || loading"
+        [class.loading]="loading"
+      >
+        <i class="material-icons" *ngIf="!loading">login</i>
+        <i class="material-icons spinning" *ngIf="loading">hourglass_empty</i>
+        <span *ngIf="!loading">Access Dashboard</span>
+        <span *ngIf="loading">Signing in...</span>
+      </button>
+
+      <div class="form-footer">
+        <p>Need regular access? <a routerLink="/login" class="link">User Login</a></p>
+      </div>
+    </form>
+  </div>
 </div>

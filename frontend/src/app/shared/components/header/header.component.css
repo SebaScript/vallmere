@@ -12,6 +12,7 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--font-color);
+  position: relative;
 }
 
 .search-container .material-icons {
@@ -24,6 +25,7 @@
   border: none;
   font-size: 1rem;
   outline: none;
+  padding-right: 2rem;
 }
 
 .search-container input::placeholder {
@@ -46,10 +48,6 @@
   transition: all 0.2s ease-in-out !important;
 }
 
-.search-container {
-  position: relative;
-}
-
 .search-container .close-btn {
   position: absolute;
   right: 0.5rem;
@@ -61,9 +59,6 @@
   cursor: pointer;
 }
 
-.search-container input {
-  padding-right: 2rem;
-}
 .search-results {
   scrollbar-width: thin;
   scrollbar-color: var(--hover-color) transparent;
@@ -79,21 +74,25 @@
   padding: 0;
   z-index: 1000;
 }
+
 .search-results li {
   display: flex;
   align-items: center;
   padding: 0.5rem;
   cursor: pointer;
 }
+
 .search-results li:hover span {
   color: var(--hover-color);
 }
+
 .search-results .thumb {
   width: 40px;
   height: 40px;
   object-fit: cover;
   margin-right: 0.5rem;
 }
+
 .search-results .name {
   flex: 1;
 }
@@ -103,21 +102,18 @@
   align-items: center;
 }
 
-.action-item,
-.user-icon {
+.action-item {
   position: relative;
   margin-right: 1rem;
   cursor: pointer;
 }
 
-.action-item > i:hover,
-.user:hover {
+.action-item > i:hover {
   color: var(--hover-color);
   transition: all 0.2s ease-in-out;
 }
 
-.action-item .material-icons,
-.user {
+.action-item .material-icons {
   font-size: 1.5rem;
 }
 

@@ -1,23 +1,138 @@
 <div class="signup-container">
+  <div class="signup-card">
+    <!-- Back to Home Button -->
+    <button type="button" class="back-home-btn" [routerLink]="['/']">
+      <i class="material-icons">arrow_back</i>
+      <span>Back to Home</span>
+    </button>
+
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <img src="/logo.png" alt="VALLMERE" class="signup-logo">
+      <h1 class="brand-name">VALLMERE</h1>
+    </div>
+
     <form (ngSubmit)="onSignUp()" [formGroup]="signUpForm" class="signup-form">
-        <h2>Sign Up</h2>
-        <div class="form-group">
-        <label for="username">Username</label>
-        <input id="username" type="text" formControlName="username" required />
+      <div class="form-header">
+        <h2>Create Account</h2>
+        <p>Join the VALLMERE community</p>
+      </div>
+
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <div class="input-container">
+          <i class="material-icons">person</i>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            [class.error]="name?.invalid && name?.touched"
+            placeholder="Enter your full name"
+            required
+          />
         </div>
-        <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" type="text" formControlName="email" required />
+        <div class="error-message" *ngIf="name?.invalid && name?.touched">
+          <small *ngIf="name?.errors?.['required']">Name is required</small>
+          <small *ngIf="name?.errors?.['minlength']">Name must be at least 3 characters</small>
         </div>
-        <div class="form-group">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-container">
+          <i class="material-icons">email</i>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            [class.error]="email?.invalid && email?.touched"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div class="error-message" *ngIf="email?.invalid && email?.touched">
+          <small *ngIf="email?.errors?.['required']">Email is required</small>
+          <small *ngIf="email?.errors?.['email']">Please enter a valid email</small>
+        </div>
+      </div>
+
+      <div class="form-group">
         <label for="password">Password</label>
-        <input id="password" type="password" formControlName="password" required />
+        <div class="input-container">
+          <i class="material-icons">lock</i>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            [class.error]="password?.invalid && password?.touched"
+            placeholder="Create a password"
+            required
+          />
         </div>
-        <div class="form-group">
-        <label for="rePassword">Repeat Password</label>
-        <input id="rePassword" type="password" formControlName="rePassword" required />
+        <div class="error-message" *ngIf="password?.invalid && password?.touched">
+          <small *ngIf="password?.errors?.['required']">Password is required</small>
+          <small *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</small>
         </div>
-        <button type="submit">Sign Up</button>
-        <span>Already have an acount? <a [routerLink]="['/login']">log-in</a></span>
+      </div>
+
+      <div class="form-group">
+        <label for="rePassword">Confirm Password</label>
+        <div class="input-container">
+          <i class="material-icons">lock_outline</i>
+          <input
+            id="rePassword"
+            type="password"
+            formControlName="rePassword"
+            [class.error]="rePassword?.invalid && rePassword?.touched || signUpForm.errors?.['passwordsNotMatch'] && submitted"
+            placeholder="Confirm your password"
+            required
+          />
+        </div>
+        <div class="error-message" *ngIf="rePassword?.invalid && rePassword?.touched">
+          <small *ngIf="rePassword?.errors?.['required']">Please repeat your password</small>
+        </div>
+        <div class="error-message" *ngIf="signUpForm.errors?.['passwordsNotMatch'] && submitted">
+          <small>Passwords do not match</small>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="signup-btn"
+        [disabled]="signUpForm.invalid || isLoading"
+        [class.loading]="isLoading"
+      >
+        <i class="material-icons" *ngIf="!isLoading">person_add</i>
+        <i class="material-icons spinning" *ngIf="isLoading">hourglass_empty</i>
+        <span *ngIf="!isLoading">Create Account</span>
+        <span *ngIf="isLoading">Creating account...</span>
+      </button>
+
+      <!-- OAuth Divider -->
+      <div class="oauth-divider">
+        <span>or continue with</span>
+      </div>
+
+      <!-- Google OAuth Button -->
+      <button
+        type="button"
+        class="google-oauth-btn"
+        (click)="signUpWithGoogle()"
+        [disabled]="isGoogleLoading"
+      >
+        <svg width="20" height="20" viewBox="0 0 48 48">
+          <path fill="#ffc107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+          <path fill="#ff3d00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+          <path fill="#4caf50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+          <path fill="#1976d2" d="M43.611,20.083L43.595,20L42,20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+        </svg>
+        <span *ngIf="!isGoogleLoading">Continue with Google</span>
+        <span *ngIf="isGoogleLoading">Signing up...</span>
+      </button>
+
+      <div class="form-footer">
+        <p>Already have an account? <a [routerLink]="['/login']" class="link">Sign in</a></p>
+      </div>
     </form>
+  </div>
 </div>

@@ -15,16 +15,4 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(['admin', 'client'], { message: 'Role must be admin or client' })
   role?: 'admin' | 'client';
-
-  @IsOptional()
-  @IsString()
-  profilePicture?: string;
-
-  @IsOptional()
-  @IsString()
-  shippingAddress?: string;
-
-  @IsOptional()
-  @IsString()
-  billingAddress?: string;
 }

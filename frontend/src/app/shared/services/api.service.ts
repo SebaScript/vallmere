@@ -32,10 +32,15 @@ export class ApiService {
     return this.http.patch<T>(`${this.apiUrl}/${endpoint}/${id}`, data);
   }
 
+  // Patch method without ID for endpoints that don't require it
+  public patchWithoutId<T>(endpoint: string, data: any): Observable<T> {
+    return this.http.patch<T>(`${this.apiUrl}/${endpoint}`, data);
+  }
+
   // Delete method with optional id
   public delete<T>(endpoint: string, id?: number): Observable<T> {
-    const url = id !== undefined 
-      ? `${this.apiUrl}/${endpoint}/${id}` 
+    const url = id !== undefined
+      ? `${this.apiUrl}/${endpoint}/${id}`
       : `${this.apiUrl}/${endpoint}`;
     return this.http.delete<T>(url);
   }

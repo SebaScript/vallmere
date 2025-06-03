@@ -1,52 +1,369 @@
 .login-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    width: 400px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  color: var(--font-color);
+  font-family: var(--font-family);
+  padding: 2rem;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
-.login-form {
-padding: 1rem;
-border-radius: 8px;
-width: 100%;
-max-width: 400px;
+.login-card {
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid var(--hover-color);
+  border-radius: 16px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 20px 40px rgba(235, 12, 79, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
 }
 
-.login-form h2 {
-text-align: center;
-margin-bottom: 1.5rem;
-border-bottom: 1px solid var(--hover-color);
+.back-home-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--font-color);
+  border: 1px solid rgba(255, 213, 0, 0.3);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+  text-decoration: none;
 }
 
-.login-form span {
+.back-home-btn:hover {
+  background: rgba(255, 213, 0, 0.1);
+  border-color: var(--hover-color);
+  color: var(--hover-color);
+  transform: translateX(-2px);
+}
+
+.back-home-btn .material-icons {
+  background: transparent !important;
+  color: currentColor !important;
+  font-size: 18px !important;
+  -webkit-text-fill-color: currentColor !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  font-family: 'Material Icons' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+}
+
+.back-home-btn:hover .material-icons {
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+/* Logo Section */
+.logo-section {
   text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.brand-name {
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+  background: linear-gradient(45deg, var(--hover-color), #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+/* Form Styles */
+.login-form {
+  width: 100%;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-header h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+  color: var(--font-color);
+}
+
+.form-header p {
+  color: rgba(255, 213, 0, 0.7);
+  margin: 0;
+  font-size: 1rem;
 }
 
 .form-group {
-margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.form-group input {
-width: 100%;
-padding: 0.5rem;
-border-radius: 4px;
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: var(--font-color);
 }
 
-button {
-width: 100%;
-padding: 0.75rem;
-border: none;
-border-radius: 4px;
-font-size: 1rem;
-font-weight: bolder;
-cursor: pointer;
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-button:hover {
-color: var(--hover-color);
-transition: all 0.2s ease-in-out;
+.input-container .material-icons {
+  position: absolute;
+  left: 1rem;
+  color: rgba(255, 213, 0, 0.6) !important;
+  z-index: 1;
+  background: transparent !important;
+  font-size: 20px !important;
+  -webkit-text-fill-color: rgba(255, 213, 0, 0.6) !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  font-family: 'Material Icons' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 2px solid rgba(255, 213, 0, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 213, 0, 0.05);
+  color: var(--font-color);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.input-container input:focus {
+  outline: none;
+  border-color: var(--hover-color);
+  background: rgba(235, 12, 79, 0.1);
+  box-shadow: 0 0 0 3px rgba(235, 12, 79, 0.1);
+}
+
+.input-container input:focus ~ .material-icons {
+  color: var(--hover-color) !important;
+  -webkit-text-fill-color: var(--hover-color) !important;
+}
+
+.input-container input::placeholder {
+  color: rgba(255, 213, 0, 0.5);
+}
+
+.input-container input.error {
+  border-color: #dc3545;
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Buttons */
+.login-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  color: currentColor;
+  border: 2px solid var(--hover-color);
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: transparent;
+  color: var(--hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(235, 12, 79, 0.3);
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-btn .material-icons {
+  background: transparent !important;
+  color: currentColor !important;
+  font-size: 20px !important;
+  -webkit-text-fill-color: currentColor !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  font-family: 'Material Icons' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+  word-wrap: normal !important;
+  direction: ltr !important;
+}
+
+.login-btn:hover .material-icons {
+  color: currentColor !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* OAuth Styles */
+.oauth-divider {
+  text-align: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.oauth-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 213, 0, 0.3), transparent);
+}
+
+.oauth-divider span {
+  background: rgba(0, 0, 0, 0.95);
+  padding: 0 1.5rem;
+  color: rgba(255, 213, 0, 0.7);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.google-oauth-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--font-color);
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.google-oauth-btn:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.google-oauth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.google-oauth-btn svg {
+  flex-shrink: 0;
+}
+
+.google-oauth-btn span {
+  color: inherit;
+  text-transform: none;
+  font-weight: 500;
+}
+
+/* Form Footer */
+.form-footer {
+  text-align: center;
+}
+
+.form-footer p {
+  margin: 0;
+  color: rgba(255, 213, 0, 0.7);
+}
+
+.form-footer .link {
+  color: var(--hover-color);
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.form-footer .link:hover {
+  color: #ffd700;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 1rem;
+  }
+
+  .login-card {
+    padding: 2rem;
+    max-width: 100%;
+  }
+
+  .brand-name {
+    font-size: 1.5rem;
+  }
+
+  .form-header h2 {
+    font-size: 1.5rem;
+  }
 }

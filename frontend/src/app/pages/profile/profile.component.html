@@ -1,51 +1,324 @@
-<div class="profile-card">
+<div class="profile-container">
     <div class="profile-header">
-        <h2>{{ user.name }}</h2>
-        <p>{{ user.email }}</p>
+    <div class="user-info">
+      <div class="user-details" *ngIf="user()">
+        <h1>{{ user()?.name }}</h1>
+        <p class="email">{{ user()?.email }}</p>
+        <span class="role-badge" [class]="user()?.role">{{ user()?.role }}</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="logout()">
+        <i class="material-icons">logout</i>
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-section">
+    <div class="section-header">
+      <h2>Personal Information</h2>
+      <button
+        class="btn btn-primary"
+        (click)="toggleEditProfile()"
+        *ngIf="!isEditingProfile()"
+      >
+        <i class="material-icons">edit</i>
+        Edit Profile
+      </button>
     </div>
 
-    <div class="profile-info" *ngIf="!editing; else editForm">
-        <p><strong>Teléfono:</strong> {{ user.phone }}</p>
-        <p><strong>Dirección:</strong> {{ user.address[0] }}</p>
-        <p><strong>Fecha de nacimiento:</strong> {{ user.birthdate }}</p>
-        <button (click)="toggleEdit()">Editar</button>
+    <div class="profile-content" *ngIf="!isEditingProfile(); else editProfileForm">
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Full Name</label>
+          <span>{{ user()?.name || 'Not set' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Email Address</label>
+          <span>{{ user()?.email || 'Not set' }}</span>
+        </div>
+      </div>
     </div>
 
-    <ng-template #editForm>
-        <form (ngSubmit)="save()" class="form">
-            <label>
-                Nombre:
-                <input type="text" [(ngModel)]="user.name" name="name" required>
-            </label>
-            <label>
-                Email:
-                <input type="email" [(ngModel)]="user.email" name="email" required>
-            </label>
-            <label>
-                Teléfono:
-                <input type="text" [(ngModel)]="user.phone" name="phone">
-            </label>
-            <label>
-                Dirección:
-                <input type="text" [(ngModel)]="user.address" name="address">
-            </label>
-            <label>
-                Fecha de nacimiento:
-                <input type="date" [(ngModel)]="user.birthdate" name="birthdate">
-            </label>
+    <ng-template #editProfileForm>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [class.error]="name?.invalid && name?.touched"
+              placeholder="Enter your full name"
+            />
+            <div class="error-message" *ngIf="name?.invalid && name?.touched">
+              <small *ngIf="name?.errors?.['required']">Name is required</small>
+              <small *ngIf="name?.errors?.['minlength']">Name must be at least 3 characters</small>
+            </div>
+          </div>
 
-            <button type="submit">Guardar</button>
-            <button type="button" (click)="toggleEdit()">Cancelar</button>
+          <div class="form-group">
+            <label for="email">Email Address (Read-only)</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              readonly
+              class="readonly"
+            />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="profileForm.invalid || isLoadingProfile()"
+            [class.loading]="isLoadingProfile()"
+          >
+            <span *ngIf="!isLoadingProfile()">
+              <i class="material-icons">save</i>
+              Save Changes
+            </span>
+            <span *ngIf="isLoadingProfile()">
+              <i class="material-icons">hourglass_empty</i>
+              Saving...
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="toggleEditProfile()"
+            [disabled]="isLoadingProfile()"
+          >
+            <i class="material-icons">cancel</i>
+            Cancel
+          </button>
+        </div>
         </form>
     </ng-template>
 </div>
 
-<div class="profile-card">
-    <div class="profile-header">
-        <h2>Direcciones</h2>
-        <ul>
-            <li *ngFor="let dir of user.address">{{ dir }}</li>
-        </ul>
-    <button (click)="toggleEdit()">Agregar dirección</button>
+  <div class="profile-section">
+    <div class="section-header">
+      <h2>Addresses</h2>
+      <button class="btn btn-primary" (click)="openAddressModal()">
+        <i class="material-icons">add</i>
+        Add Address
+      </button>
+    </div>
+
+    <div class="addresses-content">
+      <div class="loading-spinner" *ngIf="isLoadingAddresses()">
+        <i class="material-icons">hourglass_empty</i>
+        <span>Loading addresses...</span>
+      </div>
+
+      <div class="addresses-grid" *ngIf="!isLoadingAddresses() && addresses().length > 0">
+        <div
+          class="address-card"
+          *ngFor="let address of addresses()"
+          [class.default]="address.isDefault"
+        >
+          <div class="address-header">
+            <div class="address-title">
+              <h3>{{ address.title }}</h3>
+              <div class="address-badges">
+                <span class="type-badge" [class]="address.type">{{ address.type }}</span>
+                <span class="default-badge" *ngIf="address.isDefault">Default</span>
+              </div>
+            </div>
+            <div class="address-actions">
+              <button
+                class="btn-icon"
+                (click)="openAddressModal(address)"
+                title="Edit address"
+              >
+                <i class="material-icons">edit</i>
+              </button>
+              <button
+                class="btn-icon"
+                (click)="setDefaultAddress(address.addressId)"
+                *ngIf="!address.isDefault"
+                title="Set as default"
+              >
+                <i class="material-icons">star_border</i>
+              </button>
+              <button
+                class="btn-icon delete"
+                (click)="deleteAddress(address.addressId)"
+                title="Delete address"
+              >
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+          </div>
+
+          <div class="address-details">
+            <p>{{ address.street }}</p>
+            <p>{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+            <p>{{ address.country }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!isLoadingAddresses() && addresses().length === 0">
+        <i class="material-icons">location_off</i>
+        <h3>No addresses found</h3>
+        <p>Add your first address to get started</p>
+        <button class="btn btn-primary" (click)="openAddressModal()">
+          <i class="material-icons">add</i>
+          Add First Address
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showAddressModal()" (click)="closeAddressModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editingAddressId() ? 'Edit Address' : 'Add New Address' }}</h2>
+      <button class="btn-icon" (click)="closeAddressModal()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+
+    <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="address-form">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="title">Address Title *</label>
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            [class.error]="title?.invalid && title?.touched"
+            placeholder="e.g., Home, Work, Office"
+          />
+          <div class="error-message" *ngIf="title?.invalid && title?.touched">
+            <small *ngIf="title?.errors?.['required']">Title is required</small>
+            <small *ngIf="title?.errors?.['minlength']">Title must be at least 2 characters</small>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="street">Street Address *</label>
+          <input
+            id="street"
+            type="text"
+            formControlName="street"
+            [class.error]="street?.invalid && street?.touched"
+            placeholder="123 Main Street, Apt 4B"
+          />
+          <div class="error-message" *ngIf="street?.invalid && street?.touched">
+            <small *ngIf="street?.errors?.['required']">Street address is required</small>
+            <small *ngIf="street?.errors?.['minlength']">Street address must be at least 5 characters</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="city">City *</label>
+          <input
+            id="city"
+            type="text"
+            formControlName="city"
+            [class.error]="city?.invalid && city?.touched"
+            placeholder="New York"
+          />
+          <div class="error-message" *ngIf="city?.invalid && city?.touched">
+            <small *ngIf="city?.errors?.['required']">City is required</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="state">State/Province *</label>
+          <input
+            id="state"
+            type="text"
+            formControlName="state"
+            [class.error]="state?.invalid && state?.touched"
+            placeholder="NY"
+          />
+          <div class="error-message" *ngIf="state?.invalid && state?.touched">
+            <small *ngIf="state?.errors?.['required']">State is required</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="zipCode">ZIP Code *</label>
+          <input
+            id="zipCode"
+            type="text"
+            formControlName="zipCode"
+            [class.error]="zipCode?.invalid && zipCode?.touched"
+            placeholder="10001"
+          />
+          <div class="error-message" *ngIf="zipCode?.invalid && zipCode?.touched">
+            <small *ngIf="zipCode?.errors?.['required']">ZIP code is required</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="country">Country *</label>
+          <input
+            id="country"
+            type="text"
+            formControlName="country"
+            [class.error]="country?.invalid && country?.touched"
+            placeholder="United States"
+          />
+          <div class="error-message" *ngIf="country?.invalid && country?.touched">
+            <small *ngIf="country?.errors?.['required']">Country is required</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Address Type</label>
+          <select id="type" formControlName="type">
+            <option value="both">Both (Shipping & Billing)</option>
+            <option value="shipping">Shipping Only</option>
+            <option value="billing">Billing Only</option>
+          </select>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isDefault">
+            <span class="checkmark"></span>
+            Set as default address
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="addressForm.invalid || isLoadingAddresses()"
+          [class.loading]="isLoadingAddresses()"
+        >
+          <span *ngIf="!isLoadingAddresses()">
+            <i class="material-icons">save</i>
+            {{ editingAddressId() ? 'Update' : 'Save' }} Address
+          </span>
+          <span *ngIf="isLoadingAddresses()">
+            <i class="material-icons">hourglass_empty</i>
+            Saving...
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="closeAddressModal()"
+          [disabled]="isLoadingAddresses()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
     </div>
 </div>

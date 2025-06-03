@@ -1,119 +1,315 @@
 <div class="admin-panel">
-  <aside class="sidebar">
-    <h3>Menú</h3>
-    <ul>
-      <li (click)="view = 'list'">Ver Productos</li>
-      <li (click)="view = 'add'">Agregar Producto</li>
-    </ul>
+  <aside class="admin-sidebar">
+    <div class="admin-header">
+      <img src="/logo.png" alt="VALLMERE" class="admin-logo">
+      <h1 class="admin-title">VALLMERE</h1>
+      <p class="admin-subtitle">Admin Dashboard</p>
+    </div>
+
+    <nav class="admin-nav">
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <div class="nav-item"
+               [class.active]="view === 'list'"
+               (click)="view = 'list'">
+            <i class="material-icons">inventory</i>
+            <span>View Products</span>
+          </div>
+        </li>
+        <li>
+          <div class="nav-item"
+               [class.active]="view === 'add'"
+               (click)="setAddView()">
+            <i class="material-icons">add_box</i>
+            <span>Add Product</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
   </aside>
 
-  <main class="content">
+  <main class="admin-content">
+    <div class="content-header">
+      <h1 class="content-title">{{ view === 'list' ? 'Product Management' : (view === 'edit' ? 'Edit Product' : 'Add New Product') }}</h1>
+      <button class="logout-btn" (click)="logout()">
+        <i class="material-icons">logout</i>
+        <span>Logout</span>
+      </button>
+    </div>
+
+    <!-- Error display -->
+    <div class="error-banner" *ngIf="error">
+      <i class="material-icons">error</i>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="admin-search-container" *ngIf="view === 'list'">
+      <div class="search-wrapper">
+        <i class="material-icons search-icon">search</i>
+        <input
+          type="text"
+          placeholder="Search products by name, description, or category..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+          class="search-input">
+        <button
+          *ngIf="searchQuery"
+          class="clear-search-btn"
+          (click)="clearSearch()"
+          title="Clear search">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+      <div class="search-results-info" *ngIf="searchQuery">
+        Found {{ products.length }} product(s) matching "{{ searchQuery }}"
+      </div>
+    </div>
     <section *ngIf="view === 'list'">
-      <h2>Productos Disponibles</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let product of products">
-            <td class="product-image">
-              <img
-                [src]="product.imageUrl"
-                [alt]="product.name"
-                class="thumb"
-              />
-            </td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.category }}</td>
-            <td>{{ product.price | currency }}</td>
-            <td>{{ product.stock }}</td>
-            <td>
-              <div class="actions">
-                <button class="edit-btn" (click)="editProduct(product)">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button
-                  class="icon-btn"
-                  title="Eliminar"
-                  (click)="deleteProduct(product.id)"
-                >
-                  <span class="material-icons">delete</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="admin-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of products">
+              <td class="product-image">
+                <img
+                  [src]="product.imageUrl"
+                  [alt]="product.name"
+                  class="thumb"
+                />
+              </td>
+              <td>{{ product.name }}</td>
+              <td>{{ product.category }}</td>
+              <td>{{ product.price | currency }}</td>
+              <td>{{ product.stock }}</td>
+              <td>
+                <div class="actions">
+                  <button class="btn-icon edit" (click)="editProduct(product)" title="Edit Product">
+                    <i class="material-icons">edit</i>
+                  </button>
+                  <button class="btn-icon delete" (click)="deleteProduct(product.id)" title="Delete Product">
+                    <i class="material-icons">delete</i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section *ngIf="view === 'add' || view === 'edit'">
-      <h2>
-        {{ view === 'edit' ? 'Editar Producto' : 'Agregar Producto' }}
-      </h2>
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="admin-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Product Name</label>
+            <input id="name" formControlName="name" placeholder="Enter product name"
+                   [class.error]="productForm.get('name')?.invalid && productForm.get('name')?.touched" />
+            <div class="error-message" *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
+              <small *ngIf="productForm.get('name')?.errors?.['required']">Product name is required</small>
+              <small *ngIf="productForm.get('name')?.errors?.['minlength']">Product name must be at least 3 characters</small>
+            </div>
+          </div>
 
-      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="name">Nombre</label>
-          <input id="name" formControlName="name" />
-        </div>
+          <div class="form-group">
+            <label for="price">Price</label>
+            <div class="price-input-container">
+              <span class="currency-symbol">$</span>
+                            <input id="price"
+                     type="text"
+                     formControlName="price"
+                     placeholder="0.00"
+                     (input)="formatPriceInput($event)"
+                     (keydown)="onPriceKeydown($event)"
+                     (blur)="validatePrice()"
+                     [class.error]="productForm.get('price')?.invalid && productForm.get('price')?.touched" />
+            </div>
+            <div class="error-message" *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">
+              <small *ngIf="productForm.get('price')?.errors?.['required']">Price is required</small>
+              <small *ngIf="productForm.get('price')?.errors?.['min']">Price must be greater than 0</small>
+              <small *ngIf="productForm.get('price')?.errors?.['pattern']">Please enter a valid price format</small>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label for="price">Precio</label>
-          <input id="price" type="number" formControlName="price" />
-        </div>
+          <div class="form-group">
+            <label for="categoryId">Category</label>
+            <select id="categoryId" formControlName="categoryId"
+                    [class.error]="productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched">
+              <option value="">Select a category</option>
+              <option *ngFor="let category of categories" [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched">
+              <small *ngIf="productForm.get('categoryId')?.errors?.['required']">Category is required</small>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label for="imageUrl">Imagen Principal</label>
-          <input id="imageUrl" formControlName="imageUrl" placeholder="URL de la imagen principal" />
-        </div>
+          <div class="form-group">
+            <label for="stock">Stock Quantity</label>
+            <input id="stock"
+                   type="text"
+                   formControlName="stock"
+                   placeholder="0"
+                   (input)="formatStockInput($event)"
+                   (keydown)="onStockKeydown($event)"
+                   [class.error]="productForm.get('stock')?.invalid && productForm.get('stock')?.touched" />
+            <div class="error-message" *ngIf="productForm.get('stock')?.invalid && productForm.get('stock')?.touched">
+              <small *ngIf="productForm.get('stock')?.errors?.['required']">Stock quantity is required</small>
+              <small *ngIf="productForm.get('stock')?.errors?.['min']">Stock must be 0 or greater</small>
+              <small *ngIf="productForm.get('stock')?.errors?.['max']">Stock cannot exceed 9999</small>
+              <small *ngIf="productForm.get('stock')?.errors?.['pattern']">Please enter a valid number</small>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label>Imágenes Adicionales</label>
-          <div formArrayName="carouselUrl" class="image-urls-container">
-            <div *ngFor="let url of carouselUrl.controls; let i = index" class="image-url-input">
-              <input [formControlName]="i" placeholder="URL de imagen adicional" />
-              <button type="button" class="icon-btn" (click)="removeImageUrl(i)" [disabled]="i === 0">
-                <span class="material-icons">remove</span>
+          <div class="form-group full-width">
+            <label for="imageUrl">Main Image</label>
+
+                          <!-- Image Upload Section -->
+              <div class="image-upload-section">
+                <div class="upload-option" *ngIf="isSupabaseConfigured">
+                                    <label class="upload-btn" [class.uploading]="isUploadingMainImage">
+                    <input type="file"
+                           accept="image/*"
+                           (change)="onMainImageSelected($event)"
+                           [disabled]="isUploadingMainImage"
+                           style="display: none;">
+                    <div class="upload-content">
+                      <i class="material-icons" *ngIf="!isUploadingMainImage">cloud_upload</i>
+                      <i class="material-icons spinning" *ngIf="isUploadingMainImage">hourglass_empty</i>
+                      <span *ngIf="!isUploadingMainImage">Upload Image</span>
+                      <span *ngIf="isUploadingMainImage">Uploading...</span>
+                    </div>
+                  </label>
+                  <span class="upload-help">Or enter URL manually below</span>
+                </div>
+
+                <!-- Configuration Warning -->
+                <div class="supabase-warning" *ngIf="!isSupabaseConfigured">
+                  <i class="material-icons">warning</i>
+                  <span>Image upload disabled. Configure Supabase credentials in environment.ts to enable file uploads.</span>
+                </div>
+
+                              <!-- Manual URL Input (hidden when image is loaded) -->
+                <input id="imageUrl"
+                       formControlName="imageUrl"
+                       placeholder="https://example.com/image.jpg"
+                       [class.error]="productForm.get('imageUrl')?.invalid && productForm.get('imageUrl')?.touched"
+                       [style.display]="productForm.get('imageUrl')?.value ? 'none' : 'block'" />
+
+                <!-- Image Preview with controls -->
+                <div class="image-preview" *ngIf="productForm.get('imageUrl')?.value">
+                  <img [src]="productForm.get('imageUrl')?.value"
+                       alt="Main image preview"
+                       (error)="hideImage($event)"
+                       (load)="showImage($event)">
+                  <div class="image-controls">
+                    <span class="image-name">{{ getImageFileName(productForm.get('imageUrl')?.value) }}</span>
+                    <button type="button" class="btn-icon delete" (click)="clearMainImage()" title="Remove image">
+                      <i class="material-icons">delete</i>
+                    </button>
+                  </div>
+                </div>
+            </div>
+
+            <div class="error-message" *ngIf="productForm.get('imageUrl')?.invalid && productForm.get('imageUrl')?.touched">
+              <small *ngIf="productForm.get('imageUrl')?.errors?.['required']">Main image URL is required</small>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Additional Images</label>
+            <div formArrayName="carouselUrl" class="image-urls-container">
+              <div *ngFor="let url of carouselUrl.controls; let i = index" class="image-url-input">
+
+                                <!-- Upload Button for Carousel Image -->
+                <div class="carousel-upload-section" *ngIf="isSupabaseConfigured">
+                                    <label class="upload-btn small" [class.uploading]="isUploadingCarouselImages[i]">
+                    <input type="file"
+                           accept="image/*"
+                           (change)="onCarouselImageSelected($event, i)"
+                           [disabled]="isUploadingCarouselImages[i]"
+                           style="display: none;">
+                    <div class="upload-content">
+                      <i class="material-icons" *ngIf="!isUploadingCarouselImages[i]">cloud_upload</i>
+                      <i class="material-icons spinning" *ngIf="isUploadingCarouselImages[i]">hourglass_empty</i>
+                      <span *ngIf="!isUploadingCarouselImages[i]">Upload</span>
+                      <span *ngIf="isUploadingCarouselImages[i]">Uploading...</span>
+                    </div>
+                  </label>
+                </div>
+
+                                <!-- URL Input and Remove Button (hidden when image is loaded) -->
+                <div class="input-with-button" [style.display]="url.value ? 'none' : 'flex'">
+                  <input [formControlName]="i" placeholder="https://example.com/additional-image.jpg"
+                         [class.error]="url.invalid && url.touched" />
+                  <button type="button" class="btn-icon delete" (click)="removeImageUrl(i)" title="Remove Image">
+                    <i class="material-icons">remove</i>
+                  </button>
+                </div>
+
+                <!-- Image Preview for Carousel with controls -->
+                <div class="carousel-image-preview" *ngIf="url.value">
+                  <img [src]="url.value"
+                       alt="Carousel image preview"
+                       (error)="hideImage($event)"
+                       (load)="showImage($event)">
+                  <div class="carousel-image-controls">
+                    <span class="carousel-image-name">{{ getImageFileName(url.value) }}</span>
+                    <button type="button" class="btn-icon delete" (click)="clearCarouselImage(i)" title="Remove image">
+                      <i class="material-icons">delete</i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="error-message" *ngIf="url.invalid && url.touched">
+                  <small *ngIf="url.errors?.['required']">Image URL is required</small>
+                </div>
+              </div>
+              <button type="button" class="btn btn-secondary" (click)="addImageUrl()" style="margin-top: 1rem;">
+                <i class="material-icons">add</i>
+                Add Another Image
               </button>
             </div>
-            <button type="button" class="add-url-btn" (click)="addImageUrl()">
-              <span class="material-icons">add</span>
-              Agregar otra imagen
-            </button>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="description">Product Description</label>
+            <textarea
+              id="description"
+              rows="4"
+              formControlName="description"
+              placeholder="Enter product description..."
+              [class.error]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
+            ></textarea>
+            <div class="error-message" *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
+              <small *ngIf="productForm.get('description')?.errors?.['required']">Product description is required</small>
+              <small *ngIf="productForm.get('description')?.errors?.['minlength']">Description must be at least 10 characters</small>
+            </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="description">Descripción</label>
-          <textarea
-            id="description"
-            rows="3"
-            formControlName="description"
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="category">Categoría</label>
-          <input id="category" formControlName="category" />
-        </div>
-
-        <div class="form-group">
-          <label for="stock">Stock</label>
-          <input id="stock" type="number" formControlName="stock" />
-        </div>
-
         <div class="form-actions">
-          <button type="submit">
-            {{ view === 'edit' ? 'Actualizar' : 'Agregar' }}
+          <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid || loading" [class.loading]="loading">
+            <i class="material-icons" *ngIf="!loading">{{ view === 'edit' ? 'update' : 'add' }}</i>
+            <i class="material-icons spinning" *ngIf="loading">hourglass_empty</i>
+            <span *ngIf="!loading">{{ view === 'edit' ? 'Update Product' : 'Add Product' }}</span>
+            <span *ngIf="loading">{{ view === 'edit' ? 'Updating...' : 'Adding...' }}</span>
           </button>
-          <button type="button" (click)="cancel()">Cancelar</button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">
+            <i class="material-icons">cancel</i>
+            <span>Cancel</span>
+          </button>
         </div>
       </form>
     </section>

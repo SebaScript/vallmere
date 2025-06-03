@@ -5,7 +5,8 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { AdminLoginComponent } from './pages/admin-login/admin-login.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
-import { authGuard } from './shared/guards/auth.guard';
+import { AuthCallbackComponent } from './pages/auth-callback/auth-callback.component';
+import { authGuard, adminGuard } from './shared/guards/auth.guard';
 import { profileGuard } from './shared/guards/profile.guard';
 import { ProductDetailComponent } from './pages/product/product.component';
 
@@ -23,6 +24,10 @@ export const routes: Routes = [
     component: SignUpComponent
   },
   {
+    path: 'auth/callback',
+    component: AuthCallbackComponent
+  },
+  {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [profileGuard]
@@ -34,7 +39,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminComponent,
-    canActivate: [authGuard]
+    canActivate: [adminGuard]
   },
   {
     path: 'admin-login',

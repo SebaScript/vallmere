@@ -42,7 +42,7 @@ export class CartService {
 
     if (user) {
       // Try to get user's cart from API
-      this.getUserCart(user.id || 0).subscribe();
+      this.getUserCart(user.userId || 0).subscribe();
     } else {
       // Use local storage for anonymous users
       const localCart = localStorage.getItem('cart');
@@ -235,7 +235,7 @@ export class CartService {
     }
 
     // Get or create user cart
-    return this.getUserCart(user.id || 0).pipe(
+    return this.getUserCart(user.userId || 0).pipe(
       switchMap(() => {
         // Add each item to the cart
         const addPromises = items.map(item =>

@@ -15,6 +15,11 @@ export class AppComponent {
   constructor(public router: Router) {}
 
   get isLoginRoute(): boolean {
-    return this.router.url === '/login' || this.router.url === '/admin-login' || this.router.url === '/admin' || this.router.url === '/profile' || this.router.url === '/sign-up';
+    return this.router.url === '/login' ||
+           this.router.url === '/admin-login' ||
+           this.router.url === '/admin' ||
+           this.router.url === '/profile' ||
+           this.router.url === '/sign-up' ||
+           this.router.url.startsWith('/auth/callback');
   }
 }

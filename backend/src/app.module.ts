@@ -10,6 +10,7 @@ import { CategoryModule } from './category/category.module';
 import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
 import { SeederModule } from './seeder/seeder.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { SeederModule } from './seeder/seeder.module';
     OrderModule,
     AuthModule,
     SeederModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

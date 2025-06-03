@@ -50,14 +50,22 @@ export class SeederService implements OnModuleInit {
     try {
       // Try to find admin by email
       try {
-        await this.userService.findByEmail('admin@example.com');
-        this.logger.log('Admin user already exists, skipping seed');
+        const existingAdmin = await this.userService.findByEmail('admin@example.com');
+        
+        if (existingAdmin.password === 'admin') {
+          await this.userService.update(existingAdmin.userId, {
+            password: 'admin123'
+          });
+          this.logger.log('Updated admin password to encrypted version');
+        } else {
+          this.logger.log('Admin user already exists with encrypted password, skipping seed');
+        }
       } catch (error) {
-        // If user doesn't exist (throws NotFoundException), create it
+
         const admin = await this.userService.create({
           name: 'Admin',
           email: 'admin@example.com',
-          password: 'admin',
+          password: 'admin123',
           role: 'admin',
         });
         this.logger.log(`Created admin user: ${admin.email}`);
