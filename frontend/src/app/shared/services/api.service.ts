@@ -37,6 +37,11 @@ export class ApiService {
     return this.http.patch<T>(`${this.apiUrl}/${endpoint}`, data);
   }
 
+  // Put method without ID for endpoints that don't require it
+  public putWithoutId<T>(endpoint: string, data: any): Observable<T> {
+    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data);
+  }
+
   // Delete method with optional id
   public delete<T>(endpoint: string, id?: number): Observable<T> {
     const url = id !== undefined

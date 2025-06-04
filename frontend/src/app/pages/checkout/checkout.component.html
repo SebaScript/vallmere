@@ -1,0 +1,274 @@
+<!-- Checkout Container -->
+<div class="checkout-container">
+  <!-- Header -->
+  <div class="checkout-header">
+    <button class="back-btn" (click)="goBack()">
+      <i class="material-icons">arrow_back</i>
+      <span>Back to Cart</span>
+    </button>
+    <div class="stripe-logo">
+      <span class="brand">VALLMERE</span>
+      <span class="powered">Powered by</span>
+      <div class="stripe-text">stripe</div>
+    </div>
+  </div>
+
+  <div class="checkout-content">
+    <!-- Left Side - Payment Form -->
+    <div class="payment-section">
+      <div class="section-header">
+        <h2>Payment Information</h2>
+        <div class="secure-badge">
+          <i class="material-icons">lock</i>
+          <span>Secure Checkout</span>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection -->
+      <div class="payment-methods">
+        <div class="method-tabs">
+          <button
+            class="method-tab"
+            [class.active]="selectedMethod === 'card'"
+            (click)="selectMethod('card')">
+            <i class="material-icons">credit_card</i>
+            <span>Card</span>
+          </button>
+          <button
+            class="method-tab"
+            [class.active]="selectedMethod === 'paypal'"
+            (click)="selectMethod('paypal')">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a.2.2 0 0 1 .098-.037c.095-.014.19-.02.287-.02h1.31c.524 0 .968.382 1.05.9l.548 3.478a.641.641 0 0 1-.633.74h-1.31c-.524 0-.968-.382-1.05-.9l-.3-1.906c-.026-.164-.026-.328 0-.492.026-.164.052-.33.082-.498a.2.2 0 0 1 .098-.037z"/>
+            </svg>
+            <span>PayPal</span>
+          </button>
+          <button
+            class="method-tab"
+            [class.active]="selectedMethod === 'google'"
+            (click)="selectMethod('google')">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Google Pay</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Payment Form -->
+      <form class="payment-form" [formGroup]="checkoutForm" *ngIf="selectedMethod === 'card'">
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="your@email.com"
+            [class.error]="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched">
+          <div class="error-message" *ngIf="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched">
+            <small *ngIf="checkoutForm.get('email')?.errors?.['required']">Email is required</small>
+            <small *ngIf="checkoutForm.get('email')?.errors?.['email']">Please enter a valid email</small>
+          </div>
+        </div>
+
+        <!-- Card Information -->
+        <div class="card-section">
+          <label>Card Information</label>
+          <div class="card-inputs">
+            <div class="card-number-group">
+              <input
+                type="text"
+                formControlName="cardNumber"
+                placeholder="1234 1234 1234 1234"
+                (input)="formatCardNumber($event)"
+                [class.error]="checkoutForm.get('cardNumber')?.invalid && checkoutForm.get('cardNumber')?.touched">
+              <div class="card-icons">
+                <i class="material-icons">credit_card</i>
+              </div>
+            </div>
+            <div class="card-details">
+              <input
+                type="text"
+                formControlName="expiryDate"
+                placeholder="MM / YY"
+                (input)="formatExpiryDate($event)"
+                [class.error]="checkoutForm.get('expiryDate')?.invalid && checkoutForm.get('expiryDate')?.touched">
+              <input
+                type="text"
+                formControlName="cvc"
+                placeholder="CVC"
+                maxlength="4"
+                [class.error]="checkoutForm.get('cvc')?.invalid && checkoutForm.get('cvc')?.touched">
+            </div>
+          </div>
+          <div class="card-errors">
+            <div class="error-message" *ngIf="checkoutForm.get('cardNumber')?.invalid && checkoutForm.get('cardNumber')?.touched">
+              <small>Please enter a valid card number</small>
+            </div>
+            <div class="error-message" *ngIf="checkoutForm.get('expiryDate')?.invalid && checkoutForm.get('expiryDate')?.touched">
+              <small>Please enter a valid expiry date</small>
+            </div>
+            <div class="error-message" *ngIf="checkoutForm.get('cvc')?.invalid && checkoutForm.get('cvc')?.touched">
+              <small>Please enter a valid CVC</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cardholder Name -->
+        <div class="form-group">
+          <label for="cardholderName">Cardholder Name</label>
+          <input
+            id="cardholderName"
+            type="text"
+            formControlName="cardholderName"
+            placeholder="Full name on card"
+            [class.error]="checkoutForm.get('cardholderName')?.invalid && checkoutForm.get('cardholderName')?.touched">
+          <div class="error-message" *ngIf="checkoutForm.get('cardholderName')?.invalid && checkoutForm.get('cardholderName')?.touched">
+            <small>Cardholder name is required</small>
+          </div>
+        </div>
+
+        <!-- Billing Address -->
+        <div class="form-group">
+          <label for="country">Country or Region</label>
+          <select id="country" formControlName="country">
+            <option value="US">United States</option>
+            <option value="CA">Canada</option>
+            <option value="GB">United Kingdom</option>
+            <option value="MX">Mexico</option>
+            <option value="ES">Spain</option>
+            <option value="FR">France</option>
+            <option value="DE">Germany</option>
+            <option value="IT">Italy</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input
+            id="address"
+            type="text"
+            formControlName="address"
+            placeholder="Address"
+            [class.error]="checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">City</label>
+            <input
+              id="city"
+              type="text"
+              formControlName="city"
+              placeholder="City"
+              [class.error]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched">
+          </div>
+          <div class="form-group">
+            <label for="postalCode">Postal Code</label>
+            <input
+              id="postalCode"
+              type="text"
+              formControlName="postalCode"
+              placeholder="12345"
+              [class.error]="checkoutForm.get('postalCode')?.invalid && checkoutForm.get('postalCode')?.touched">
+          </div>
+        </div>
+      </form>
+
+      <!-- Alternative Payment Methods -->
+      <div class="alternative-payments" *ngIf="selectedMethod !== 'card'">
+        <div class="payment-placeholder" *ngIf="selectedMethod === 'paypal'">
+          <div class="paypal-simulation">
+            <div class="paypal-logo">PayPal</div>
+            <p>You will be redirected to PayPal to complete your payment securely.</p>
+            <button class="paypal-btn" (click)="simulatePayPal()">
+              Continue to PayPal
+            </button>
+          </div>
+        </div>
+
+        <div class="payment-placeholder" *ngIf="selectedMethod === 'google'">
+          <div class="google-pay-simulation">
+            <div class="google-pay-logo">
+              <svg width="40" height="16" viewBox="0 0 61 25">
+                <path fill="#4285F4" d="M19.526 2.635v4.083h2.518c.6 0 1.096-.202 1.488-.605.403-.402.605-.882.605-1.437 0-.544-.202-1.018-.605-1.422-.392-.413-.888-.62-1.488-.62h-2.518zm0 5.52v4.736h-1.504V1.198h4.022c1.158 0 2.101.34 2.832 1.021.73.682 1.096 1.54 1.096 2.575 0 1.044-.366 1.902-1.096 2.584-.731.681-1.674 1.022-2.832 1.022h-2.518z"/>
+                <path fill="#34A853" d="M28.85 8.02c-.4-.4-.6-.889-.6-1.466 0-.578.2-1.067.6-1.467.4-.4.89-.6 1.467-.6.578 0 1.067.2 1.467.6.4.4.6.889.6 1.467 0 .577-.2 1.066-.6 1.466-.4.4-.889.6-1.467.6-.577 0-1.067-.2-1.467-.6zm-.231 4.956V1.198h1.54v11.778h-1.54z"/>
+                <path fill="#EA4335" d="M37.309 8.682c-.231-.4-.544-.711-.938-.933-.394-.222-.830-.333-1.308-.333-.711 0-1.314.2-1.807.6-.494.4-.784.933-.87 1.6h5.091c-.058-.378-.168-.711-.168-.934zm-4.874 1.467c.058.667.34 1.2.847 1.6.508.4 1.111.6 1.807.6.533 0 1.022-.133 1.467-.4.445-.267.756-.622.933-1.067l1.376.578c-.311.711-.778 1.289-1.4 1.733-.622.445-1.356.667-2.2.667-1.067 0-1.956-.333-2.667-1-.711-.667-1.067-1.533-1.067-2.6 0-1.067.356-1.933 1.067-2.6.711-.667 1.6-1 2.667-1 1.022 0 1.889.311 2.6.933.711.622 1.067 1.467 1.067 2.533v.533h-6.49z"/>
+                <path fill="#FBBC05" d="M44.474 2.635v1.933h2.518c.6 0 1.096-.202 1.488-.605.403-.402.605-.882.605-1.437 0-.544-.202-1.018-.605-1.422-.392-.413-.888-.62-1.488-.62h-2.518zm0 5.52v4.736h-1.504V1.198h4.022c1.158 0 2.101.34 2.832 1.021.73.682 1.096 1.54 1.096 2.575 0 1.044-.366 1.902-1.096 2.584-.731.681-1.674 1.022-2.832 1.022h-2.518z"/>
+              </svg>
+            </div>
+            <p>Use your saved payment methods and shipping addresses for faster checkout.</p>
+            <button class="google-pay-btn" (click)="simulateGooglePay()">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="white" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              </svg>
+              Pay with Google Pay
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Order Summary -->
+    <div class="order-section">
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+
+        <div class="order-items">
+          <div class="order-item" *ngFor="let item of cartService.items()">
+            <img [src]="item.product.imageUrl" [alt]="item.product.name" class="item-thumbnail">
+            <div class="item-info">
+              <h4>{{ item.product.name }}</h4>
+              <p class="item-details">Qty: {{ item.quantity }}</p>
+            </div>
+            <div class="item-price">
+              ${{ (item.product.price * item.quantity).toFixed(2) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="order-totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span>${{ cartService.totalAmount().toFixed(2) }}</span>
+          </div>
+          <div class="total-row">
+            <span>Shipping</span>
+            <span>Free</span>
+          </div>
+          <div class="total-row">
+            <span>Tax</span>
+            <span>${{ (cartService.totalAmount() * 0.08).toFixed(2) }}</span>
+          </div>
+          <div class="total-row total">
+            <span>Total</span>
+            <span>${{ (cartService.totalAmount() * 1.08).toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <!-- Pay Button -->
+        <button
+          class="pay-button"
+          [disabled]="selectedMethod === 'card' && checkoutForm.invalid || isProcessing"
+          (click)="processPayment()"
+          [class.loading]="isProcessing">
+          <i class="material-icons" *ngIf="!isProcessing">{{ selectedMethod === 'card' ? 'credit_card' : 'payment' }}</i>
+          <i class="material-icons spinning" *ngIf="isProcessing">hourglass_empty</i>
+          <span *ngIf="!isProcessing">
+            Pay ${{ (cartService.totalAmount() * 1.08).toFixed(2) }}
+          </span>
+          <span *ngIf="isProcessing">Processing...</span>
+        </button>
+
+        <div class="security-notice">
+          <i class="material-icons">lock</i>
+          <span>Your payment information is secure and encrypted</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

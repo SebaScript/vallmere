@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  itemsInCart = 0;
   constructor(public router: Router) {}
 
   get isLoginRoute(): boolean {
@@ -20,6 +19,7 @@ export class AppComponent {
            this.router.url === '/admin' ||
            this.router.url === '/profile' ||
            this.router.url === '/sign-up' ||
+           this.router.url === '/checkout' ||
            this.router.url.startsWith('/auth/callback');
   }
 }

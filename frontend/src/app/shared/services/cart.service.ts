@@ -1,8 +1,37 @@
 import { Injectable, computed, signal } from '@angular/core';
+import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
+import { catchError, tap, map, switchMap } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 import { ApiService } from './api.service';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
-import { Product } from '../interfaces/product.interface';
 import { AuthService } from './auth.service';
+import { Product } from '../interfaces/product.interface';
+
+// Backend product interface (as it comes from the API)
+interface BackendProduct {
+  productId: number;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  image: string;
+  carouselImages: string[];
+  category?: { name: string };
+}
+
+// Backend cart item interface
+interface BackendCartItem {
+  cartItemId: number;
+  productId: number;
+  quantity: number;
+  product: BackendProduct;
+}
+
+// Backend cart interface
+interface BackendCart {
+  cartId: number;
+  userId: number;
+  items: BackendCartItem[];
+}
 
 export interface CartItem {
   cartItemId: number;
@@ -23,230 +52,182 @@ export interface Cart {
 export class CartService {
   private cartItems = signal<CartItem[]>([]);
   private cartId = signal<number | null>(null);
+  private isLoading = signal<boolean>(false);
 
   totalItems = computed(() => this.cartItems().reduce((total, item) => total + item.quantity, 0));
   totalAmount = computed(() => this.cartItems().reduce((total, item) => total + (item.quantity * item.product.price), 0));
 
   items = this.cartItems.asReadonly();
+  loading = this.isLoading.asReadonly();
 
   constructor(
     private apiService: ApiService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {
-    // Initialize cart for authenticated user or create a local cart
-    this.initializeCart();
-  }
-
-  private initializeCart(): void {
-    const user = this.authService.getCurrentUser();
-
-    if (user) {
-      // Try to get user's cart from API
-      this.getUserCart(user.userId || 0).subscribe();
-    } else {
-      // Use local storage for anonymous users
-      const localCart = localStorage.getItem('cart');
-      if (localCart) {
-        try {
-          const parsedCart = JSON.parse(localCart);
-          this.cartItems.set(parsedCart);
-        } catch (e) {
-          console.error('Error parsing cart from localStorage', e);
-          this.cartItems.set([]);
-        }
+    // Initialize cart when user logs in
+    this.authService.currentUser$.subscribe((user: any) => {
+      if (user) {
+        this.loadCart();
+      } else {
+        this.clearCartData();
       }
-    }
+    });
   }
 
-  getUserCart(userId: number): Observable<Cart | null> {
-    return this.apiService.get<any>(`carts/user/${userId}`).pipe(
-      tap(cart => {
-        if (cart) {
-          this.cartId.set(cart.cartId);
-          this.cartItems.set(cart.items.map((item: any) => ({
-            cartItemId: item.cartItemId,
-            productId: item.productId,
-            quantity: item.quantity,
-            product: {
-              id: item.product.productId,
-              name: item.product.name,
-              description: item.product.description,
-              price: item.product.price,
-              stock: item.product.stock,
-              imageUrl: item.product.image,
-              carouselUrl: item.product.carouselImages || [],
-              category: item.product.category?.name || ''
-            }
-          })));
-        }
-      }),
+  private loadCart(): void {
+    if (!this.authService.isUserLogged()) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.apiService.get<BackendCart>('cart/my-cart').pipe(
       catchError(error => {
-        // If cart not found, create a new one
-        if (error.status === 404) {
-          return this.createCart(userId).pipe(
-            tap(newCart => {
-              this.cartId.set(newCart.cartId);
-              this.cartItems.set([]);
-            }),
-            map(() => null)
-          );
-        }
+        console.error('Error loading cart:', error);
+        this.toastr.error('Error loading cart', 'Cart Error');
+        this.isLoading.set(false);
         return of(null);
       })
-    );
-  }
-
-  private createCart(userId: number): Observable<Cart> {
-    return this.apiService.post<Cart>('carts', { userId });
+    ).subscribe(cart => {
+      this.isLoading.set(false);
+      if (cart) {
+        this.cartId.set(cart.cartId);
+                // Map backend product data to frontend format
+        const mappedItems = cart.items?.map(item => ({
+          ...item,
+          product: {
+            id: item.product.productId,
+            name: item.product.name,
+            description: item.product.description,
+            price: item.product.price,
+            stock: item.product.stock,
+            imageUrl: item.product.image,
+            carouselUrl: Array.isArray(item.product.carouselImages)
+              ? item.product.carouselImages
+              : [item.product.image],
+            category: item.product.category?.name || 'Unknown'
+          }
+        })) || [];
+        this.cartItems.set(mappedItems);
+      }
+    });
   }
 
   addToCart(product: Product, quantity: number = 1): Observable<CartItem | void> {
-    const user = this.authService.getCurrentUser();
-
-    if (user && this.cartId()) {
-      // Add to backend cart
-      return this.apiService.post<CartItem>(`carts/${this.cartId()}/items`, {
-        productId: product.id,
-        quantity
-      }).pipe(
-        tap(cartItem => {
-          // Update local cart state
-          const currentItems = this.cartItems();
-          const existingItemIndex = currentItems.findIndex(item => item.productId === product.id);
-
-          if (existingItemIndex >= 0) {
-            // Update existing item
-            const updatedItems = [...currentItems];
-            updatedItems[existingItemIndex].quantity += quantity;
-            this.cartItems.set(updatedItems);
-          } else {
-            // Add new item
-            this.cartItems.update(items => [...items, {
-              cartItemId: cartItem.cartItemId,
-              productId: product.id,
-              quantity,
-              product
-            }]);
-          }
-        })
-      );
-    } else {
-      // Handle local storage for anonymous users
-      const currentItems = this.cartItems();
-      const existingItemIndex = currentItems.findIndex(item => item.productId === product.id);
-
-      if (existingItemIndex >= 0) {
-        // Update existing item
-        const updatedItems = [...currentItems];
-        updatedItems[existingItemIndex].quantity += quantity;
-        this.cartItems.set(updatedItems);
-      } else {
-        // Add new item with a temporary ID
-        this.cartItems.update(items => [
-          ...items,
-          {
-            cartItemId: Date.now(), // Use timestamp as temporary ID
-            productId: product.id,
-            quantity,
-            product
-          }
-        ]);
-      }
-
-      // Save to localStorage
-      localStorage.setItem('cart', JSON.stringify(this.cartItems()));
-
-      return of(undefined);
+    if (!this.authService.isUserLogged()) {
+      this.toastr.error('Please log in to add items to cart', 'Authentication Required');
+      return throwError(() => new Error('User not logged in'));
     }
-  }
 
-  removeFromCart(itemId: number): Observable<void> {
-    const user = this.authService.getCurrentUser();
+    const addItemDto = {
+      productId: product.id,
+      quantity: quantity
+    };
 
-    if (user && this.cartId()) {
-      // Remove from backend cart - using full endpoint with no separate ID needed
-      return this.apiService.delete<void>(`carts/${this.cartId()}/items/${itemId}`).pipe(
-        tap(() => {
-          // Update local cart state
-          this.cartItems.update(items => items.filter(item => item.cartItemId !== itemId));
-        })
-      );
-    } else {
-      // Handle local storage for anonymous users
-      this.cartItems.update(items => items.filter(item => item.cartItemId !== itemId));
-      localStorage.setItem('cart', JSON.stringify(this.cartItems()));
-      return of(undefined);
-    }
+    this.isLoading.set(true);
+    return this.apiService.post<CartItem>('cart/add-item', addItemDto).pipe(
+      tap(cartItem => {
+        this.isLoading.set(false);
+        this.loadCart(); // Reload cart to get updated data
+        this.toastr.success(`${product.name} added to cart!`, 'Cart Updated');
+      }),
+      catchError(error => {
+        this.isLoading.set(false);
+        const errorMessage = error.error?.message || 'Failed to add item to cart';
+        this.toastr.error(errorMessage, 'Cart Error');
+        return throwError(() => error);
+      })
+    );
   }
 
   updateQuantity(itemId: number, quantity: number): Observable<void> {
-    const user = this.authService.getCurrentUser();
-    const currentItems = this.cartItems();
-    const itemIndex = currentItems.findIndex(item => item.cartItemId === itemId);
-
-    if (itemIndex === -1) {
-      return of(undefined);
+    if (!this.cartId()) {
+      return throwError(() => new Error('No cart available'));
     }
 
-    if (quantity <= 0) {
+    if (quantity < 1) {
       return this.removeFromCart(itemId);
     }
 
-    if (user && this.cartId()) {
-      // For now, we'll remove and add since the backend doesn't have an update endpoint
-      return this.removeFromCart(itemId).pipe(
-        switchMap(() => {
-          const item = currentItems[itemIndex];
-          return this.addToCart(item.product, quantity);
-        }),
-        map(() => undefined)
-      );
-    } else {
-      // Handle local storage for anonymous users
-      const updatedItems = [...currentItems];
-      updatedItems[itemIndex].quantity = quantity;
-      this.cartItems.set(updatedItems);
-      localStorage.setItem('cart', JSON.stringify(this.cartItems()));
-      return of(undefined);
+    this.isLoading.set(true);
+    return this.apiService.putWithoutId<CartItem>(`cart/${this.cartId()}/items/${itemId}/quantity`, { quantity }).pipe(
+      tap(() => {
+        this.isLoading.set(false);
+        this.loadCart(); // Reload cart to get updated data
+        this.toastr.success('Cart updated successfully', 'Cart Updated');
+      }),
+      map(() => void 0),
+      catchError(error => {
+        this.isLoading.set(false);
+        const errorMessage = error.error?.message || 'Failed to update cart';
+        this.toastr.error(errorMessage, 'Cart Error');
+        return throwError(() => error);
+      })
+    );
+  }
+
+  removeFromCart(itemId: number): Observable<void> {
+    if (!this.cartId()) {
+      return throwError(() => new Error('No cart available'));
     }
+
+    this.isLoading.set(true);
+    return this.apiService.delete<void>(`cart/${this.cartId()}/items/${itemId}`).pipe(
+      tap(() => {
+        this.isLoading.set(false);
+        this.loadCart(); // Reload cart to get updated data
+        this.toastr.success('Item removed from cart', 'Cart Updated');
+      }),
+      catchError(error => {
+        this.isLoading.set(false);
+        const errorMessage = error.error?.message || 'Failed to remove item from cart';
+        this.toastr.error(errorMessage, 'Cart Error');
+        return throwError(() => error);
+      })
+    );
   }
 
   clearCart(): Observable<void> {
-    const user = this.authService.getCurrentUser();
-
-    if (user && this.cartId()) {
-      // Clear backend cart - using full endpoint with no ID needed
-      return this.apiService.delete<void>(`carts/${this.cartId()}/items`);
-    } else {
-      // Handle local storage for anonymous users
-      this.cartItems.set([]);
-      localStorage.removeItem('cart');
-      return of(undefined);
-    }
-  }
-
-  // When a user logs in, this can be called to migrate their anonymous cart to their account
-  migrateCart(): Observable<void> {
-    const user = this.authService.getCurrentUser();
-    const items = this.cartItems();
-
-    if (!user || items.length === 0) {
-      return of(undefined);
+    if (!this.cartId()) {
+      return throwError(() => new Error('No cart available'));
     }
 
-    // Get or create user cart
-    return this.getUserCart(user.userId || 0).pipe(
-      switchMap(() => {
-        // Add each item to the cart
-        const addPromises = items.map(item =>
-          this.addToCart(item.product, item.quantity)
-        );
-
-        // Once all items are added, clear local storage
-        return of(undefined).pipe(
-          tap(() => localStorage.removeItem('cart'))
-        );
+    this.isLoading.set(true);
+    return this.apiService.delete<void>(`cart/${this.cartId()}/clear`).pipe(
+      tap(() => {
+        this.isLoading.set(false);
+        this.cartItems.set([]);
+        this.toastr.success('Cart cleared successfully', 'Cart Updated');
+      }),
+      catchError(error => {
+        this.isLoading.set(false);
+        const errorMessage = error.error?.message || 'Failed to clear cart';
+        this.toastr.error(errorMessage, 'Cart Error');
+        return throwError(() => error);
       })
     );
+  }
+
+  getCartTotal(): Observable<{ itemCount: number; total: number }> {
+    if (!this.cartId()) {
+      return of({ itemCount: 0, total: 0 });
+    }
+
+    return this.apiService.get<{ itemCount: number; total: number }>(`cart/${this.cartId()}/total`);
+  }
+
+  private clearCartData(): void {
+    this.cartItems.set([]);
+    this.cartId.set(null);
+  }
+
+  // Method to refresh cart data
+  refreshCart(): void {
+    this.loadCart();
+  }
+
+  // Get current cart ID
+  getCurrentCartId(): number | null {
+    return this.cartId();
   }
 }

@@ -25,9 +25,10 @@
     </div>
 
     <div class="actions">
-      <div class="action-item">
+      <!-- Cart button -->
+      <div class="action-item cart-icon" (click)="toggleCart()">
         <i class="material-icons">shopping_cart</i>
-        <span class="badge">{{ cartCount }}</span>
+        <span class="badge" *ngIf="cartService.totalItems() > 0">{{ cartService.totalItems() }}</span>
       </div>
 
       <!-- Simplified user icon -->
@@ -37,3 +38,9 @@
     </div>
   </div>
 </header>
+
+<!-- Cart Component -->
+<app-cart
+  [isOpen]="isCartOpen"
+  (cartClosed)="closeCart()">
+</app-cart>

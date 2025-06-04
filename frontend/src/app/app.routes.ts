@@ -9,6 +9,7 @@ import { AuthCallbackComponent } from './pages/auth-callback/auth-callback.compo
 import { authGuard, adminGuard } from './shared/guards/auth.guard';
 import { profileGuard } from './shared/guards/profile.guard';
 import { ProductDetailComponent } from './pages/product/product.component';
+import { CheckoutComponent } from './pages/checkout/checkout.component';
 
 export const routes: Routes = [
   {
@@ -35,6 +36,11 @@ export const routes: Routes = [
   {
     path: 'product/:id',
     component: ProductDetailComponent
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'admin',

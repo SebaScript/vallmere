@@ -1,24 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Put } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
-import { AddCartItemDto } from './dto/add-cart-item.dto';
+import { AddCartItemDto, UpdateQuantityDto } from './dto/add-cart-item.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 
-@Controller('carts')
+@Controller('cart')
 @UseGuards(JwtAuthGuard)
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post()
   create(@Body() createCartDto: CreateCartDto, @GetUser() user: any) {
-    // Asegurar que el usuario solo puede crear su propio carrito
-    return this.cartService.create({ ...createCartDto, userId: user.userId });
+    return this.cartService.create(createCartDto);
   }
 
   @Get('my-cart')
-  findMyCart(@GetUser() user: any) {
-    return this.cartService.findByUserId(user.userId);
+  async getMyCart(@GetUser() user: any) {
+    return this.cartService.getOrCreateCart(user.userId);
   }
 
   @Get('user/:userId')
@@ -31,12 +30,29 @@ export class CartController {
     return this.cartService.findOne(+id);
   }
 
+  @Post('add-item')
+  async addItemToMyCart(
+    @Body() addItemDto: AddCartItemDto,
+    @GetUser() user: any,
+  ) {
+    return this.cartService.addItemByUserId(user.userId, addItemDto);
+  }
+
   @Post(':id/items')
   addItem(
     @Param('id') id: string,
     @Body() addItemDto: AddCartItemDto,
   ) {
     return this.cartService.addItem(+id, addItemDto);
+  }
+
+  @Put(':id/items/:itemId/quantity')
+  updateItemQuantity(
+    @Param('id') cartId: string,
+    @Param('itemId') itemId: string,
+    @Body() updateQuantityDto: UpdateQuantityDto,
+  ) {
+    return this.cartService.updateItemQuantity(+cartId, +itemId, updateQuantityDto.quantity);
   }
 
   @Delete(':id/items/:itemId')
@@ -47,9 +63,14 @@ export class CartController {
     return this.cartService.removeItem(+id, +itemId);
   }
 
-  @Delete(':id/items')
+  @Delete(':id/clear')
   clearCart(@Param('id') id: string) {
     return this.cartService.clearCart(+id);
+  }
+
+  @Get(':id/total')
+  getCartTotal(@Param('id') id: string) {
+    return this.cartService.getCartTotal(+id);
   }
 
   @Delete(':id')

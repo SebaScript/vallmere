@@ -8,4 +8,10 @@ export class AddCartItemDto {
   @IsNumber()
   @Min(1)
   quantity: number;
+}
+
+export class UpdateQuantityDto {
+  @IsNumber()
+  @Min(1)
+  quantity: number;
 } 

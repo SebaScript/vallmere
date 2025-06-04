@@ -1,10 +1,12 @@
 import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
 import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
+import { CartComponent } from '../cart/cart.component';
 import { User } from '../../interfaces/user.interface';
 import { Product } from '../../interfaces/product.interface';
 
@@ -17,35 +19,35 @@ interface SearchProduct {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, CartComponent],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @Input() cartCount: number = 0;
+  @Input() cartCount: number = 0; // Keeping for backward compatibility but using cartService instead
   query: string = '';
   results: SearchProduct[] = [];
   currentUser: User | null = null;
   isAuthenticated = false;
   isAdmin = false;
+  isCartOpen = false;
   private allProducts: Product[] = [];
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private productService: ProductService,
+    public cartService: CartService,
     private toastr: ToastrService
   ) { }
 
   ngOnInit() {
-    // Subscribe to authentication state changes
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      this.isAuthenticated = this.authService.isAuthenticated();
-      this.isAdmin = this.authService.isAdmin();
+      this.isAuthenticated = !!user;
+      this.isAdmin = user?.role === 'admin';
     });
 
-    // Load products for search functionality
     this.loadProducts();
   }
 
@@ -66,25 +68,23 @@ export class HeaderComponent implements OnInit {
       return;
     }
 
-    const q = this.query.toLowerCase();
+    const searchTerm = this.query.toLowerCase();
     this.results = this.allProducts
       .filter(product =>
-        product.name.toLowerCase().includes(q) ||
-        product.description.toLowerCase().includes(q) ||
-        product.category.toLowerCase().includes(q)
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm)
       )
+      .slice(0, 5)
       .map(product => ({
         id: product.id,
         name: product.name,
         imageUrl: product.imageUrl
-      }))
-      .slice(0, 8); // Limit to 8 results for better UX
+      }));
   }
 
   goToProduct(id: number): void {
-    this.results = [];
-    this.query = '';
     this.router.navigate(['/product', id]);
+    this.clearSearch();
   }
 
   clearSearch(): void {
@@ -92,9 +92,25 @@ export class HeaderComponent implements OnInit {
     this.results = [];
   }
 
+  toggleCart(): void {
+    if (!this.authService.isAuthenticated()) {
+      this.toastr.error('Please log in to view your cart', 'Authentication Required');
+      return;
+    }
+    this.isCartOpen = !this.isCartOpen;
+  }
+
+  closeCart(): void {
+    this.isCartOpen = false;
+  }
+
   handleUserClick(): void {
     if (this.isAuthenticated) {
-      this.router.navigate(['/profile']);
+      if (this.isAdmin) {
+        this.router.navigate(['/admin']);
+      } else {
+        this.router.navigate(['/profile']);
+      }
     } else {
       this.router.navigate(['/login']);
     }

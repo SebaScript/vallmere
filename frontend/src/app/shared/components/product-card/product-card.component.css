@@ -1,27 +1,77 @@
 .product-card {
   cursor: pointer;
-  padding: 16px;
+  padding: 24px 16px 20px 16px;
   text-align: center;
-  transition: transform 0.2s;
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);
   width: 100%;
+  background: rgba(0,0,0,0.85);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px 0 rgba(255,61,81,0.10), 0 1.5px 8px 0 rgba(255,213,0,0.08);
+  position: relative;
+  overflow: hidden;
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 32px 0 rgba(255,61,81,0.18), 0 2px 12px 0 rgba(255,213,0,0.12);
 }
 
 .product-image {
   max-width: 100%;
-  min-height: 327px;
-  border-radius: 8px;
+  min-height: 260px;
+  max-height: 320px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 18px;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.06) rotate(-1deg);
 }
 
 .product-title {
-  margin: 12px 0 4px;
-  font-weight: lighter;
+  margin: 10px 0 2px;
+  font-weight: bold;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
 }
+.product-title::after {
+  content: '';
+  display: block;
+  width: 0%;
+  height: 2px;
+  background: var(--hover-color);
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+  margin: 0 auto;
+}
+.product-card:hover .product-title::after {
+  width: 100%;
+}
+
 .product-price {
-  font-weight: lighter;
+  font-weight: bold;
   color: var(--hover-color);
+  font-size: 1.08rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Badge para productos nuevos (opcional, si se usa en el futuro) */
+.product-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: var(--hover-color);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 12px;
+  letter-spacing: 1px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(255,61,81,0.12);
+  text-transform: uppercase;
+  pointer-events: none;
 }

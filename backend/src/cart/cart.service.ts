@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
@@ -24,14 +24,18 @@ export class CartService {
     return this.cartRepository.save(cart);
   }
 
-  async findByUserId(userId: number): Promise<Cart> {
-    const cart = await this.cartRepository.findOne({
+  async findByUserId(userId: number): Promise<Cart | null> {
+    return await this.cartRepository.findOne({
       where: { userId: userId },
       relations: ['items', 'items.product'],
     });
+  }
+
+  async getOrCreateCart(userId: number): Promise<Cart> {
+    let cart = await this.findByUserId(userId);
     
     if (!cart) {
-      throw new NotFoundException(`Cart for user ID ${userId} not found`);
+      cart = await this.create({ userId });
     }
     
     return cart;
@@ -54,17 +58,29 @@ export class CartService {
     const cart = await this.findOne(cartId);
     const product = await this.productService.findOne(addItemDto.productId);
     
+    // Check if product has enough stock
+    if (product.stock < addItemDto.quantity) {
+      throw new BadRequestException(`Not enough stock. Available: ${product.stock}`);
+    }
+    
     // Check if item already exists in cart
     const existingItem = await this.cartItemRepository.findOne({
       where: {
         cartId: cartId,
         productId: addItemDto.productId,
       },
+      relations: ['product'],
     });
     
     if (existingItem) {
+      // Check total quantity doesn't exceed stock
+      const totalQuantity = existingItem.quantity + addItemDto.quantity;
+      if (totalQuantity > product.stock) {
+        throw new BadRequestException(`Not enough stock. Available: ${product.stock}, requested: ${totalQuantity}`);
+      }
+      
       // Update quantity
-      existingItem.quantity += addItemDto.quantity;
+      existingItem.quantity = totalQuantity;
       return this.cartItemRepository.save(existingItem);
     }
     
@@ -76,6 +92,37 @@ export class CartService {
     });
     
     return this.cartItemRepository.save(newItem);
+  }
+
+  async addItemByUserId(userId: number, addItemDto: AddCartItemDto): Promise<CartItem> {
+    const cart = await this.getOrCreateCart(userId);
+    return this.addItem(cart.cartId, addItemDto);
+  }
+
+  async updateItemQuantity(cartId: number, itemId: number, quantity: number): Promise<CartItem> {
+    if (quantity < 1) {
+      throw new BadRequestException('Quantity must be at least 1');
+    }
+
+    const item = await this.cartItemRepository.findOne({
+      where: {
+        cartId: cartId,
+        cartItemId: itemId,
+      },
+      relations: ['product'],
+    });
+
+    if (!item) {
+      throw new NotFoundException(`Cart item with ID ${itemId} not found in cart ${cartId}`);
+    }
+
+    // Check stock availability
+    if (quantity > item.product.stock) {
+      throw new BadRequestException(`Not enough stock. Available: ${item.product.stock}`);
+    }
+
+    item.quantity = quantity;
+    return this.cartItemRepository.save(item);
   }
 
   async removeItem(cartId: number, itemId: number): Promise<void> {
@@ -90,7 +137,7 @@ export class CartService {
   }
 
   async clearCart(cartId: number): Promise<void> {
-    const result = await this.cartItemRepository.delete({
+    await this.cartItemRepository.delete({
       cartId: cartId,
     });
   }
@@ -101,5 +148,19 @@ export class CartService {
     if (result.affected === 0) {
       throw new NotFoundException(`Cart with ID ${id} not found`);
     }
+  }
+
+  async getCartTotal(cartId: number): Promise<{ itemCount: number; total: number }> {
+    const cart = await this.findOne(cartId);
+    
+    let itemCount = 0;
+    let total = 0;
+    
+    for (const item of cart.items) {
+      itemCount += item.quantity;
+      total += item.quantity * item.product.price;
+    }
+    
+    return { itemCount, total };
   }
 } 
